@@ -1,0 +1,170 @@
+package app
+
+import (
+  "fmt"
+  "os"
+  "encoding/base64"
+
+  "github.com/olekukonko/tablewriter"
+  "github.com/hashicorp/vault/api"
+  log "github.com/sirupsen/logrus"
+  "github.com/fatih/color"
+)
+
+type Vault struct {
+  Client *api.Client
+}
+
+func (v *Vault) ConfigureClient() {
+  log.Debug("Creating Vault client..")
+  var err error
+	v.Client, err = api.NewClient(nil)
+	if err != nil {
+    log.Fatalf("Error creating Vault client: %v", err)
+    os.Exit(1)
+  }
+
+  if cfg.Vault.Address == "" {
+		log.Fatal("Vault endpoint must be defined")
+		os.Exit(1)
+	}
+
+	if cfg.Vault.Token == "" {
+		log.Fatal("Vault token must be defined")
+		os.Exit(1)
+	}
+
+	v.Client.SetAddress(cfg.Vault.Address)
+	v.Client.SetToken(cfg.Vault.Token)
+}
+
+func (v *Vault) GetTransitInfo() {
+  d, err := v.Client.Logical().Read("transit/keys/"+s.Vault.TransitKey)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  if d == nil {
+    log.Fatalf("The configured transit key doesn't seem to exists : %v", s.Vault.TransitKey)
+    os.Exit(1)
+  }
+
+  table := tablewriter.NewWriter(os.Stdout)
+  table.SetHeader([]string{"Key", "Value"})
+  for k, l := range d.Data {
+    table.Append([]string{k,fmt.Sprintf("%v",l)})
+  }
+  table.Render()
+}
+
+func (v *Vault) CreateTransitKey(key string) {
+  var payload map[string]interface{}
+  _, err := v.Client.Logical().Write("transit/keys/"+key, payload)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  fmt.Println("Transit key created successfully")
+}
+
+func (v *Vault) ListTransitKeys() {
+  d, err := v.Client.Logical().List("transit/keys")
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  table := tablewriter.NewWriter(os.Stdout)
+  table.SetHeader([]string{"Key"})
+  for _, l := range d.Data["keys"].([]interface{}) {
+    table.Append([]string{l.(string)})
+  }
+  table.Render()
+}
+
+func (v *Vault) ListSecrets() {
+  log.Debugf("Listing secrets in Vault SecretPath: %v", s.Vault.SecretPath)
+	d, err := v.Client.Logical().List(s.Vault.SecretPath)
+	if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  table := tablewriter.NewWriter(os.Stdout)
+  table.SetHeader([]string{"Key"})
+  for _, l := range d.Data["keys"].([]interface{}) {
+    table.Append([]string{l.(string)})
+  }
+  table.Render()
+}
+
+func (v *Vault) Status() {
+  vh, err := v.Client.Sys().Health()
+  fmt.Println("[VAULT]")
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  d, err := v.Client.Logical().List(s.Vault.SecretPath)
+	if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  table := tablewriter.NewWriter(os.Stdout)
+  table.Append([]string{"Sealed", fmt.Sprintf("%v",vh.Sealed)})
+  table.Append([]string{"Cluster Version", vh.Version})
+  table.Append([]string{"Cluster ID", vh.ClusterID})
+  table.Append([]string{"Secrets #", fmt.Sprintf("%v",len(d.Data["keys"].([]interface{})))})
+  table.Render()
+}
+
+func (v *Vault) Encrypt(value string) string {
+  payload := make(map[string]interface{})
+  payload["plaintext"] = base64.StdEncoding.EncodeToString([]byte(value))
+  d, err := v.Client.Logical().Write("transit/encrypt/"+s.Vault.TransitKey, payload)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+
+  return d.Data["ciphertext"].(string)
+}
+
+func (v *Vault) Decrypt(value string) string {
+  payload := make(map[string]interface{})
+  payload["ciphertext"] = value
+  d, err := v.Client.Logical().Write("transit/decrypt/"+s.Vault.TransitKey, payload)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+  output, _ := base64.StdEncoding.DecodeString(d.Data["plaintext"].(string))
+  return string(output)
+}
+
+func (v *Vault) WriteSecret(secret string, payload map[string]interface{}) {
+  _, err := v.Client.Logical().Write(s.Vault.SecretPath+secret, payload)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+  color.Green("=> Added/Updated secret '%v' and managed keys", secret)
+}
+
+func (v *Vault) DeleteSecret(secret string) {
+  _, err := v.Client.Logical().Delete(s.Vault.SecretPath+secret)
+  if err != nil {
+    log.Fatalf("Vault error: %v", err)
+    os.Exit(1)
+  }
+  color.Green("=> Deleted secret '%v' and its underlying keys", secret)
+}
+
+func (v *Vault) DeleteSecretKey(secret, key string) {
+  //TODO: Implement
+  color.Green("=> Deleted secret:key %v:%v", secret, key)
+}
