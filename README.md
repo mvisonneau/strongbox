@@ -71,7 +71,7 @@ Let's configure them:
 ```bash
 ~$ export VAULT_ADDR=https://vault.example.com:8200/
 ~$ export VAULT_TOKEN=9c9a9877-65e6-acea-8bdf-c1f0e959117f
-~$ export STRONBOX_STATE=/tmp/state.yml
+~$ export STRONGBOX_STATE=/tmp/state.yml
 ```
 
 ### Run it!
