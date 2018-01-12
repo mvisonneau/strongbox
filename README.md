@@ -59,7 +59,7 @@ The project was initially led in order to answer the following use case. I was w
 
 There are 3 mandatory configuration flags/environment variables to set to get started:
 
-```
+```bash
 ~$ strongbox | grep -E '_state|vault-addr|vault-token'
    --state FILE, -s FILE  load state from FILE (default: "~/.strongbox_state.yml") [$STRONGBOX_STATE]
    --vault-addr value     vault endpoint [$VAULT_ADDR]
@@ -68,7 +68,7 @@ There are 3 mandatory configuration flags/environment variables to set to get st
 
 Let's configure them:
 
-```
+```bash
 ~$ export VAULT_ADDR=https://vault.example.com:8200/
 ~$ export VAULT_TOKEN=9c9a9877-65e6-acea-8bdf-c1f0e959117f
 ~$ export STRONBOX_STATE=/tmp/state.yml
@@ -80,20 +80,21 @@ Let's configure them:
 
 In order to check you configuration, you can use this handy command : `strongbox status`
 
-```
+```bash
 ~$ strongbox status
 State file not found at location: /tmp/state.yml, use 'strongbox init' to generate an empty one.
 ```
 
 As you can see, the file doesn't exist yet, we can ask `strongbox` to create it for us :
 
-```
+```bash
 ~$ strongbox init
 Creating an empty state file at /tmp/state.yml
 ```
 
 The `status` command should be a bit more verbose now :
-```
+
+```bash
 [STATE]
 +------------+---------+
 | TransitKey |         |
@@ -113,7 +114,7 @@ The `status` command should be a bit more verbose now :
 
 If you want to reuse an existing key, you can use the following commands:
 
-```
+```bash
 # List the available keys from the Vault endpoint
 ~$ strongbox transit list
 +-------+
@@ -129,7 +130,7 @@ If you want to reuse an existing key, you can use the following commands:
 
 Otherwise, `strongbox` can generate and use a new one for you:
 
-```
+```bash
 ~$ strongbox transit create test
 Transit key created successfully
 ```
@@ -140,7 +141,7 @@ The **secret_path** value is where you actually want to store the secrets onto V
 
 By default, it manages the root of the `secret/` mountpoint, it is advised to use a more specific location at scale as `strongbox` would by default remove the values it doesn't manage in the **secret-path**.
 
-```
+```bash
 ~$ strongbox get-secret-path
 secret/
 ~$ strongbox set-secret-path secret/test/
@@ -152,7 +153,7 @@ secret/test/
 
 You are now all set to start managing secrets. Lets start by adding a few of them:
 
-```
+```bash
 ~$ strongbox secret write foo key sensitive
 ~$ strongbox secret write bar key sensitive
 ~$ strongbox secret write foo key2 sensitive2
@@ -161,7 +162,7 @@ You are now all set to start managing secrets. Lets start by adding a few of the
 
 You can now list all your secrets to see what they look like:
 
-```
+```bash
 ~$ strongbox secret list
 [bar]
 +-----+---------------------------------------------------------------+
@@ -177,7 +178,7 @@ You can now list all your secrets to see what they look like:
 
 If you want you can also take a look at what your state file looks like :
 
-```
+```bash
 ~$ cat /tmp/state.yml
 vault:
   transitkey: test
@@ -197,7 +198,7 @@ A choice has been made to keep the secrets and keys readable in order to be able
 
 In order to read the secrets, you can use this function:
 
-```
+```bash
 ~$ strongbox secret read foo key
 sensitive
 ~$ strongbox secret read foo key2
@@ -208,7 +209,7 @@ sensitive2
 
 If you want to be able to access those secrets directly from Vault, `strongbox` allows you to easily sync them with your cluster and maintain their state. You also have the capability of knowing what actions `strongbox` is going to perform before actually running the changes.
 
-```
+```bash
 ~$ strongbox plan
 Add/Update: 2 secret(s) and 4 key(s)
 => foo:key
@@ -217,7 +218,7 @@ Add/Update: 2 secret(s) and 4 key(s)
 => bar:key
 ```
 
-```
+```bash
 ~$ strongbox apply
 => Added/Updated secret 'foo' and managed keys
 => Added/Updated secret 'bar' and managed keys
@@ -225,7 +226,7 @@ Add/Update: 2 secret(s) and 4 key(s)
 
 FYI, the values that we store in Vault are deciphered. You can check that they have been correctly created using the Vault API or the Vault client :
 
-```
+```bash
 ~$ vault list secret/test
 Keys
 ----
@@ -245,14 +246,14 @@ key3            	sensitive3
 
 If you use docker, you can easily get started using :
 
-```
+```bash
 ~$ make dev-env
 # You should then be able to use go commands to work onto the project
 ```
 
 If you also need a development Vault endpoint to play with, you can spin a working one in a few seconds :
 
-```
+```bash
 # Start container
 ~$ docker run -d --name vault vault
 # Fetch its IP
