@@ -250,6 +250,26 @@ If you use docker, you can easily get started using :
 # You should then be able to use go commands to work onto the project
 ```
 
+If you also need a development Vault endpoint to play with, you can spin a working one in a few seconds :
+
+```
+# Start container
+~$ docker run -d --name vault vault
+# Fetch its IP
+~$ docker vault inspiring_kirch | jq -r '.[0].NetworkSettings.IPAddress'
+172.17.0.3
+# Fetch the root token
+~$ docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3
+6c53eac6-8c67-caa0-2838-ae206bd83095
+```
+
+You should then be able to export those value in the `strongbox` devel container :
+
+```
+export VAULT_ADDR=http://172.17.0.3:8200
+export VAULT_TOKEN=6c53eac6-8c67-caa0-2838-ae206bd83095
+```
+
 ## Contribute
 
 Contributions are more than welcome! Feel free to submit a [PR](https://github.com/mvisonneau/strongbox).
