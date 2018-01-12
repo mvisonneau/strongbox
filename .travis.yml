@@ -1,0 +1,12 @@
+---
+language: go
+go:
+  - 1.9
+go_import_path: github.com/mvisonneau/strongbox
+install:
+  - make prereqs
+  - make deps
+  - go get -u github.com/mattn/goveralls
+script:
+  - make all
+  - goveralls -service=travis-ci -coverprofile=coverage.out
