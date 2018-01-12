@@ -1,14 +1,30 @@
+##
+# BUILD CONTAINER
+##
+
 FROM golang:1.9.2 as builder
+
 WORKDIR /go/src/github.com/mvisonneau/strongbox
-COPY . .
-RUN
+
+COPY Makefile .
+RUN \
 make prereqs ;\
-make dep ;\
+make deps
+
+COPY . .
+RUN \
 make build
 
+##
+# RELEASE CONTAINER
+##
+
 FROM scratch
+
 WORKDIR /
+
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/src/github.com/mvisonneau/strongbox/strongbox /
+
 ENTRYPOINT ["/strongbox"]
 CMD [""]

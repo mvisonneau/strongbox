@@ -2,11 +2,11 @@ FILES   = $(shell git ls-files '*.go')
 VERSION = $(shell git describe --always)
 APP     = strongbox
 
-all: test coverage build
+all: lint vet imports test coverage build
 
 build:
 	CGO_ENABLED=1 GOOS=linux go build \
-	  -ldflags "-extldflags -static -X main.version=$(VERSION)" \
+	  -ldflags "-linkmode external -extldflags -static -X main.version=$(VERSION)" \
 		-o $(APP) \
 		main.go $(LIBS)
 	strip $(APP)
@@ -23,7 +23,7 @@ fmt:
 imports:
 	goimports -d $(FILES)
 
-test: lint vet imports
+test:
 	go test -v ./...
 
 install:
