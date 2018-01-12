@@ -80,6 +80,16 @@ func execute(c *cli.Context) error {
 		default:
 			s.ListSecrets("")
 		}
+	case "get-secret-path":
+		s.Load()
+		fmt.Println(s.VaultSecretPath())
+	case "set-secret-path":
+		if c.NArg() != 1 {
+			fmt.Println("Usage: strongbox set-secret-path [secret_path]")
+			os.Exit(1)
+		}
+		s.Load()
+		s.SetVaultSecretPath(c.Args().Get(0))
 	case "init":
 		s.Init()
 	case "status":
@@ -121,19 +131,22 @@ func run(action string) {
 		os.Exit(1)
 	}
 
-	for _, k := range d.Data["keys"].([]interface{}) {
-		if remote[k.(string)] == nil {
-			remote[k.(string)] = make(map[string]string)
-		}
 
-		l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
-		if err != nil {
-			log.Fatalf("Vault error: %v", err)
-			os.Exit(1)
-		}
+	if d != nil {
+		for _, k := range d.Data["keys"].([]interface{}) {
+			if remote[k.(string)] == nil {
+				remote[k.(string)] = make(map[string]string)
+			}
 
-		for m, n := range l.Data {
-			remote[k.(string)][m] = n.(string)
+			l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
+			if err != nil {
+				log.Fatalf("Vault error: %v", err)
+				os.Exit(1)
+			}
+
+			for m, n := range l.Data {
+				remote[k.(string)][m] = n.(string)
+			}
 		}
 	}
 

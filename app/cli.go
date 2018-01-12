@@ -9,7 +9,7 @@ func Cli() (c *cli.App) {
 	c = cli.NewApp()
 	c.Name = "strongbox"
 	c.Version = version
-	c.Usage = "Securely store secrets in git with Hashicorp Vault"
+	c.Usage = "Securely store secrets at rest with Hashicorp Vault"
 	c.EnableBashCompletion = true
 
 	c.Flags = []cli.Flag{
@@ -100,6 +100,16 @@ func Cli() (c *cli.App) {
 					Action: execute,
 				},
 			},
+		},
+		{
+			Name:   "get-secret-path",
+			Usage:  "display the currently used vault secret path in the statefile",
+			Action: execute,
+		},
+		{
+			Name:   "set-secret-path",
+			Usage:  "update the vault secret path in the statefile",
+			Action: execute,
 		},
 		{
 			Name:   "init",

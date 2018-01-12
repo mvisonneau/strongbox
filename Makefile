@@ -49,6 +49,13 @@ prereqs:
 	go get -u -v golang.org/x/tools/cmd/cover
 	go get -u -v github.com/golang/lint/golint
 
+dev-env:
+	@docker run -it --rm \
+		-v $(shell pwd):/go/src/github.com/mvisonneau/$(APP) \
+		-w /go/src/github.com/mvisonneau/$(APP) \
+		golang:1.9 \
+		/bin/bash -c 'make prereqs; make deps; make install; bash'
+
 .PHONY: all build lint vet fm imports test install deps coverage clean prereqs
 
 help:
