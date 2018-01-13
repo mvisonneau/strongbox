@@ -131,7 +131,6 @@ func run(action string) {
 		os.Exit(1)
 	}
 
-
 	if d != nil {
 		for _, k := range d.Data["keys"].([]interface{}) {
 			if remote[k.(string)] == nil {

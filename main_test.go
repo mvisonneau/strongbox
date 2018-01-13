@@ -1,8 +1,8 @@
 package main
 
 import (
-  "os"
-  "testing"
+	"os"
+	"testing"
 )
 
 func TestMain(m *testing.M) {
