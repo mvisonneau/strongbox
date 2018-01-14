@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### IMPROVEMENTS
+- Added links in Changelog
 
 ## [0.1.1] - 2018-01-14
 ### IMPROVEMENTS
@@ -28,3 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - CI
 - Some unit tests
 - License
+
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.1...HEAD
+[0.1.1]: https://github.com/mvisonneau/strongbox/compare/0.1.0...0.1.1
+[0.1.0]: https://github.com/mvisonneau/strongbox/tree/0.1.0
