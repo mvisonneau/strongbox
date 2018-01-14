@@ -1,19 +1,7 @@
 [[constraint]]
-  branch = "master"
-  name = "github.com/urfave/cli"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/sirupsen/logrus"
-
-[[constraint]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
 
 [[constraint]]
-  branch = "master"
+  version = "v0.9.*"
   name = "github.com/hashicorp/vault"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/fatih/color"

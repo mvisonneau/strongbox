@@ -2,10 +2,10 @@
 
 
 [[projects]]
-  branch = "master"
   name = "github.com/fatih/color"
   packages = ["."]
-  revision = "5df930a27be2502f99b292b7cc09ebad4d0891f4"
+  revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
+  version = "v1.5.0"
 
 [[projects]]
   name = "github.com/fatih/structs"
@@ -60,7 +60,6 @@
   revision = "23c074d0eceb2b8a5bfdbb271ab780cde70f05a8"
 
 [[projects]]
-  branch = "master"
   name = "github.com/hashicorp/vault"
   packages = [
     "api",
@@ -68,7 +67,8 @@
     "helper/jsonutil",
     "helper/parseutil"
   ]
-  revision = "05f20305b21681f9d0705b94dc02e40471bfd170"
+  revision = "87b6919dea55da61d7cd444b2442cabb8ede8ab1"
+  version = "v0.9.1"
 
 [[projects]]
   name = "github.com/mattn/go-colorable"
@@ -98,7 +98,7 @@
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "06020f85339e21b2478f756a78e295255ffa4d6a"
+  revision = "b4575eea38cca1123ec2dc90c26529b5c5acfcff"
 
 [[projects]]
   branch = "master"
@@ -119,16 +119,16 @@
   version = "v1.0.4"
 
 [[projects]]
-  branch = "master"
   name = "github.com/urfave/cli"
   packages = ["."]
-  revision = "75104e932ac2ddb944a6ea19d9f9f26316ff1145"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "0fcca4842a8d74bfddc2c96a073bd2a4d2a7a2e8"
+  revision = "13931e22f9e72ea58bb73048bc752b48c6d4d4ac"
 
 [[projects]]
   branch = "master"
@@ -139,7 +139,7 @@
     "idna",
     "lex/httplex"
   ]
-  revision = "434ec0c7fe3742c984919a691b2018a6e9694425"
+  revision = "5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec"
 
 [[projects]]
   branch = "master"
@@ -148,7 +148,7 @@
     "unix",
     "windows"
   ]
-  revision = "d38bf781f16e180a1b2ad82697d2f81d7b7ecfac"
+  revision = "810d7000345868fc619eb81f46307107118f4ae1"
 
 [[projects]]
   branch = "master"
@@ -180,6 +180,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "92fac5989cf54d11eb6f4076f40e19521002472f623b89d6e7e73936cc676fb8"
+  inputs-digest = "958c03ad15397f154523ba3ad0a0866bcc8d7cfb7c12d085b103a007cb8dcced"
   solver-name = "gps-cdcl"
   solver-version = 1
