@@ -1,8 +1,16 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli"
 )
+
+func init() {
+	cli.VersionPrinter = func(c *cli.Context) {
+    fmt.Println(c.App.Version)
+  }
+}
 
 // Cli : Generates cli configuration for the application
 func Cli(version string) (c *cli.App) {
