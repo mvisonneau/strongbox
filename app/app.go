@@ -79,6 +79,14 @@ func execute(c *cli.Context) error {
 		default:
 			s.ListSecrets("")
 		}
+	case "secret rotate-from":
+		if c.NArg() != 1 {
+			fmt.Println("Usage: strongbox secret migrate-from [former-transit-key-name]")
+			os.Exit(1)
+		}
+		s.Load()
+		v.ConfigureClient()
+		s.RotateFromOldTransitKey(c.Args().Get(0))
 	case "get-secret-path":
 		s.Load()
 		fmt.Println(s.VaultSecretPath())

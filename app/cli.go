@@ -17,7 +17,7 @@ func Cli(version string) (c *cli.App) {
 			Name:        "state,s",
 			EnvVar:      "STRONGBOX_STATE",
 			Usage:       "load state from `FILE`",
-			Value:       "~/.strongbox_state.yml",
+			Value:       ".strongbox_state.yml",
 			Destination: &cfg.State.Location,
 		},
 		cli.StringFlag{
@@ -97,6 +97,11 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:   "list",
 					Usage:  "list all managed secrets",
+					Action: execute,
+				},
+				{
+					Name:   "rotate-from",
+					Usage:  "rotate local secrets encryption from an old transit key",
 					Action: execute,
 				},
 			},

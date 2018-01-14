@@ -16,6 +16,27 @@ The idea is to leverage the [Vault Transit Secret backend](https://www.vaultproj
 
 ## Installation
 
+### Get started and try it out in less than a minute
+
+- Prereqs : **git**, **make** and **docker**
+
+If you want to have a quick look and see how it works and/or you don't already have am operational **Vault cluster**, you can easily spin up a complete test environment:
+
+```bash
+# Install
+~$ git clone git@github.com:mvisonneau/strongbox.git
+~$ make dev-env
+~$ make install
+
+# Example commands to start with
+~$ strongbox init
+~$ strongbox transit create test
+~$ strongbox secret write mysecret mykey sensitive_value
+~$ strongbox status
+```
+
+### Regular installation
+
 - Go : `go get -u github.com/mvisonneau/strongbox`
 - Docker : `docker fetch mvisonneau/strongbox`
 
@@ -30,16 +51,18 @@ USAGE:
    strongbox [global options] command [command options] [arguments...]
 
 VERSION:
-   <devel>
+   0.1.1
 
 COMMANDS:
-     transit  perform actions on transit key/backend
-     secret   perform actions on secrets (locally)
-     init     Create a empty state file at configured location
-     status   display current status
-     plan     compare local version with vault cluster
-     apply    synchronize vault managed secrets
-     help, h  Shows a list of commands or help for one command
+     transit          perform actions on transit key/backend
+     secret           perform actions on secrets (locally)
+     get-secret-path  display the currently used vault secret path in the statefile
+     set-secret-path  update the vault secret path in the statefile
+     init             Create a empty state file at configured location
+     status           display current status
+     plan             compare local version with vault cluster
+     apply            synchronize vault managed secrets
+     help, h          Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --state FILE, -s FILE  load state from FILE (default: "~/.strongbox_state.yml") [$STRONGBOX_STATE]
@@ -242,34 +265,36 @@ key2            	sensitive2
 key3            	sensitive3
 ```
 
-## Develop
+#### Rotate secrets
+
+If you feel that you need to rotate the encryption of your state file or that the transit you are using might have been compromised, `strongbox` allows you to easily do it.
+
+```bash
+# Check your current key name
+~ strongbox transit info | grep name | cut -d'|' -f 3 | xargs
+old
+
+# Create a new key
+~$ strongbox transit create new
+Transit key created successfully
+
+# Rotate!
+~$ strongbox state rotate-from old
+Rotated secrets from 'old' to 'new'
+```
+
+## Develop / Test
 
 If you use docker, you can easily get started using :
 
 ```bash
 ~$ make dev-env
-# You should then be able to use go commands to work onto the project
+# You should then be able to use go commands to work onto the project, eg:
+~$ make install
+~$ strongbox
 ```
 
-If you also need a development Vault endpoint to play with, you can spin a working one in a few seconds :
-
-```bash
-# Start container
-~$ docker run -d --name vault vault
-# Fetch its IP
-~$ docker vault inspiring_kirch | jq -r '.[0].NetworkSettings.IPAddress'
-172.17.0.3
-# Fetch the root token
-~$ docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3
-6c53eac6-8c67-caa0-2838-ae206bd83095
-```
-
-You should then be able to export those value in the `strongbox` devel container :
-
-```
-export VAULT_ADDR=http://172.17.0.3:8200
-export VAULT_TOKEN=6c53eac6-8c67-caa0-2838-ae206bd83095
-```
+This command will spin up a Vault container and a build one with everything required in terms of go dependencies in order to get started.
 
 ## Contribute
 

@@ -193,6 +193,35 @@ func (s *State) DeleteSecretKey(secret, key string) {
 	fmt.Println("Key deleted!")
 }
 
+// RotateFromOldTransitKey : Replace local encrypted values with new transit key
+func (s *State) RotateFromOldTransitKey(key string) {
+	transitKey := s.VaultTransitKey()
+	if transitKey == key {
+		log.Fatalf("%v is already the currently configured key, can't rotate with same key", key )
+		os.Exit(1)
+	}
+
+	s.SetVaultTransitKey(key)
+	secrets := make(map[string]map[string]string)
+	for k, l := range s.Secrets {
+		if secrets[k] == nil {
+			secrets[k] = make(map[string]string)
+		}
+		for m, n := range l {
+			secrets[k][m] = v.Decrypt(n)
+		}
+	}
+
+	s.SetVaultTransitKey(transitKey)
+
+	for k, l := range secrets {
+		for m, n := range l {
+			s.WriteSecretKey(k, m, v.Encrypt(n))
+		}
+	}
+	fmt.Printf("Rotated secrets from '%v' to '%v'\n", key, transitKey)
+}
+
 // save : write the statefile onto the disk
 func (s *State) save() {
 	log.Debugf("Saving state file at %v", cfg.State.Location)

@@ -121,11 +121,16 @@ func (v *Vault) Status() {
 		os.Exit(1)
 	}
 
+	secretsCount := 0
+	if d != nil {
+		secretsCount = len(d.Data["keys"].([]interface{}))
+	}
+
 	table := tablewriter.NewWriter(os.Stdout)
 	table.Append([]string{"Sealed", fmt.Sprintf("%v", vh.Sealed)})
 	table.Append([]string{"Cluster Version", vh.Version})
 	table.Append([]string{"Cluster ID", vh.ClusterID})
-	table.Append([]string{"Secrets #", fmt.Sprintf("%v", len(d.Data["keys"].([]interface{})))})
+	table.Append([]string{"Secrets #", fmt.Sprintf("%v", secretsCount)})
 	table.Render()
 }
 

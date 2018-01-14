@@ -50,11 +50,20 @@ prereqs:
 	go get -u -v github.com/golang/lint/golint
 
 dev-env:
+	@docker run -d --name vault vault
+	@sleep 1
+	@docker run -it --rm \
+		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
+		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3) \
+		vault mount transit
 	@docker run -it --rm \
 		-v $(shell pwd):/go/src/github.com/mvisonneau/$(APP) \
 		-w /go/src/github.com/mvisonneau/$(APP) \
+		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
+		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3) \
 		golang:1.9 \
 		/bin/bash -c 'make prereqs; make deps; make install; bash'
+	@docker rm vault -f
 
 .PHONY: all build lint vet fm imports test install deps coverage clean prereqs
 
