@@ -5,7 +5,7 @@ import (
 )
 
 func TestCli(t *testing.T) {
-	c := Cli()
+	c := Cli("<devel>")
 	if c.Name != "strongbox" {
 		t.Fatalf("Expected c.Name to be strongbox, got '%v'", c.Name)
 	}

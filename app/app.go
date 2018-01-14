@@ -12,7 +12,6 @@ import (
 	"github.com/mvisonneau/strongbox/config"
 )
 
-var version = "<devel>"
 var cfg config.Config
 var s State
 var v Vault

@@ -5,7 +5,7 @@ import (
 )
 
 // Cli : Generates cli configuration for the application
-func Cli() (c *cli.App) {
+func Cli(version string) (c *cli.App) {
 	c = cli.NewApp()
 	c.Name = "strongbox"
 	c.Version = version

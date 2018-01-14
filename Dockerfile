@@ -8,11 +8,11 @@ WORKDIR /go/src/github.com/mvisonneau/strongbox
 
 COPY Makefile .
 RUN \
-make prereqs ;\
-make deps
+make prereqs
 
 COPY . .
 RUN \
+make deps ;\
 make build
 
 ##

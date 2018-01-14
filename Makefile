@@ -1,5 +1,5 @@
 FILES   = $(shell git ls-files '*.go')
-VERSION = $(shell git describe --always)
+VERSION = $(shell git describe --always --abbrev=4)
 APP     = strongbox
 
 all: lint vet imports test coverage build

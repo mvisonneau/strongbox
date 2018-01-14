@@ -9,8 +9,10 @@ import (
 	"github.com/mvisonneau/strongbox/app"
 )
 
+var version = "<devel>"
+
 func main() {
 	start := time.Now()
-	app.Cli().Run(os.Args)
+	app.Cli(version).Run(os.Args)
 	log.Debugf("Executed in %s, exiting..", time.Since(start))
 }

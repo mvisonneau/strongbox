@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added CHANGELOG.md
 - Updated dependencies
 
+### BUGFIXES
+- Fixed Dockerfile
+- Fixed build versioning
+
 ## [0.1.0] - 2018-01-12
 ### FEATURES
 - Dockerfile for building the app
