@@ -23,11 +23,11 @@ func execute(c *cli.Context) error {
 	switch c.Command.FullName() {
 	case "transit use":
 		if c.NArg() != 1 {
-			fmt.Println("Usage: strongbox transit use [transit_key_name]")
-			os.Exit(1)
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		s.SetVaultTransitKey(c.Args().Get(0))
+		s.SetVaultTransitKey(c.Args().First())
 	case "transit info":
 		s.Load()
 		v.ConfigureClient()
@@ -37,66 +37,66 @@ func execute(c *cli.Context) error {
 		v.ListTransitKeys()
 	case "transit create":
 		if c.NArg() != 1 {
-			fmt.Println("Usage: strongbox transit create [transit_key_name]")
-			os.Exit(1)
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		v.CreateTransitKey(c.Args().Get(0))
-		s.SetVaultTransitKey(c.Args().Get(0))
+		v.CreateTransitKey(c.Args().First())
+		s.SetVaultTransitKey(c.Args().First())
 	case "secret write":
-		if c.NArg() != 3 {
-			fmt.Println("Usage: strongbox secret write [secret_name] [key] [value]")
-			os.Exit(1)
+		if c.NArg() != 1 || c.String("key") == "" || c.String("value") == "" {
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		s.WriteSecretKey(c.Args().Get(0), c.Args().Get(1), v.Encrypt(c.Args().Get(2)))
+		s.WriteSecretKey(c.Args().First(), c.String("key"), v.Encrypt(c.String("value")))
 	case "secret read":
-		if c.NArg() != 2 {
-			fmt.Println("Usage: strongbox secret read [secret_name] [key]")
-			os.Exit(1)
+		if c.NArg() != 1 || c.String("key") == "" {
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		fmt.Println(v.Decrypt(s.ReadSecretKey(c.Args().Get(0), c.Args().Get(1))))
+		fmt.Println(v.Decrypt(s.ReadSecretKey(c.Args().First(), c.String("key"))))
 	case "secret delete":
+		if c.NArg() != 1 {
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
+		}
 		s.Load()
-		switch c.NArg() {
-		case 1:
-			s.DeleteSecret(c.Args().Get(0))
-		case 2:
-			s.DeleteSecretKey(c.Args().Get(0), c.Args().Get(1))
-		default:
-			fmt.Println("Usage: strongbox secret read [secret_name] (key)")
-			os.Exit(1)
+		if c.String("key") == "" {
+			s.DeleteSecret(c.Args().First())
+		} else {
+			s.DeleteSecretKey(c.Args().First(), c.String("key"))
 		}
 	case "secret list":
 		s.Load()
 		switch c.NArg() {
 		case 1:
-			s.ListSecrets(c.Args().Get(0))
+			s.ListSecrets(c.Args().First())
 		default:
 			s.ListSecrets("")
 		}
 	case "secret rotate-from":
 		if c.NArg() != 1 {
-			fmt.Println("Usage: strongbox secret migrate-from [former-transit-key-name]")
-			os.Exit(1)
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		s.RotateFromOldTransitKey(c.Args().Get(0))
+		s.RotateFromOldTransitKey(c.Args().First())
 	case "get-secret-path":
 		s.Load()
 		fmt.Println(s.VaultSecretPath())
 	case "set-secret-path":
 		if c.NArg() != 1 {
-			fmt.Println("Usage: strongbox set-secret-path [secret_path]")
-			os.Exit(1)
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		s.SetVaultSecretPath(c.Args().Get(0))
+		s.SetVaultSecretPath(c.Args().First())
 	case "init":
 		s.Init()
 	case "status":

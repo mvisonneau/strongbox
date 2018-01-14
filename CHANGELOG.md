@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### IMPROVEMENTS
 - Added links in Changelog
 - Nicer version output
+- Updated CLI, added some flags on secret write and read functions
+- Enhanced functions usage outputs
 
 ### BUGFIXES
 - Fixed `status` command on empty Vault Cluster

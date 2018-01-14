@@ -31,7 +31,7 @@ If you want to have a quick look and see how it works and/or you don't already h
 # Example commands to start with
 ~$ strongbox init
 ~$ strongbox transit create test
-~$ strongbox secret write mysecret mykey sensitive_value
+~$ strongbox secret write mysecret -k mykey -v sensitive_value
 ~$ strongbox status
 ```
 
@@ -177,10 +177,10 @@ secret/test/
 You are now all set to start managing secrets. Lets start by adding a few of them:
 
 ```bash
-~$ strongbox secret write foo key sensitive
-~$ strongbox secret write bar key sensitive
-~$ strongbox secret write foo key2 sensitive2
-~$ strongbox secret write foo key3 sensitive3
+~$ strongbox secret write foo -k key -v sensitive
+~$ strongbox secret write foo -k key2 -v sensitive2
+~$ strongbox secret write foo -k key3 -v sensitive3
+~$ strongbox secret write bar -k key -v sensitive
 ```
 
 You can now list all your secrets to see what they look like:
@@ -222,9 +222,9 @@ A choice has been made to keep the secrets and keys readable in order to be able
 In order to read the secrets, you can use this function:
 
 ```bash
-~$ strongbox secret read foo key
+~$ strongbox secret read foo -k key
 sensitive
-~$ strongbox secret read foo key2
+~$ strongbox secret read foo -k key2
 sensitive2
 ```
 
