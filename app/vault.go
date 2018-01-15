@@ -31,13 +31,35 @@ func (v *Vault) ConfigureClient() {
 		os.Exit(1)
 	}
 
-	if cfg.Vault.Token == "" {
-		log.Fatal("Vault token must be defined")
+	if cfg.Vault.Token == "" &&
+		(cfg.Vault.RoleId == "" || cfg.Vault.SecretId == "") {
+		log.Fatal("Either vault-token or (vault-role-id and vault-secret-id) must be defined")
 		os.Exit(1)
 	}
 
 	v.Client.SetAddress(cfg.Vault.Address)
-	v.Client.SetToken(cfg.Vault.Token)
+
+	if cfg.Vault.Token != "" {
+		v.Client.SetToken(cfg.Vault.Token)
+	} else {
+		data := map[string]interface{}{
+			"role_id":   cfg.Vault.RoleId,
+			"secret_id": cfg.Vault.SecretId,
+		}
+
+		r, err := v.Client.Logical().Write("auth/approle/login", data)
+		if err != nil {
+			log.Fatalf("Can't authenticate against vault using provided approle credentials: %v", err)
+			os.Exit(1)
+		}
+
+		if r.Auth == nil {
+			log.Fatalf("no auth info returned with provided approle credentials")
+			os.Exit(1)
+		} else {
+			v.Client.SetToken(r.Auth.ClientToken)
+		}
+	}
 }
 
 // GetTransitInfo : Fetch some information from Vault about the configured TransitKey

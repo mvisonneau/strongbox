@@ -41,6 +41,18 @@ func Cli(version string) (c *cli.App) {
 			Destination: &cfg.Vault.Token,
 		},
 		cli.StringFlag{
+			Name:        "vault-role-id",
+			EnvVar:      "VAULT_ROLE_ID",
+			Usage:       "vault role id",
+			Destination: &cfg.Vault.RoleId,
+		},
+		cli.StringFlag{
+			Name:        "vault-secret-id",
+			EnvVar:      "VAULT_SECRET_ID",
+			Usage:       "vault secret id",
+			Destination: &cfg.Vault.SecretId,
+		},
+		cli.StringFlag{
 			Name:        "log-level",
 			EnvVar:      "STRONGBOX_LOG_LEVEL",
 			Usage:       "log level (debug,info,warn,fatal,panic)",

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### FEATURES
+- Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend
+
 ### IMPROVEMENTS
 - Switched base release container from empty (`scratch`) to `busybox` in order to be able to use it natively with GitLab CI
 
