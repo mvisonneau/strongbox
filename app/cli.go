@@ -64,7 +64,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:      "use",
 					Usage:     "configure a transit key to use",
-					ArgsUsage: "[vault_transit_key_name]",
+					ArgsUsage: "<vault_transit_key_name>",
 					Action: execute,
 				},
 				{
@@ -82,7 +82,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:      "create",
 					Usage:     "create and use a transit key",
-					ArgsUsage: "[vault_transit_key_name]",
+					ArgsUsage: "<vault_transit_key_name>",
 					Action: execute,
 				},
 			},
@@ -94,7 +94,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:   "write",
 					Usage:  "write a secret",
-					ArgsUsage: "[secret] -k [key] -v [value]",
+					ArgsUsage: "<secret> -k <key> [-v <value> or -r <string_length>]",
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:  "key,k",
@@ -104,13 +104,17 @@ func Cli(version string) (c *cli.App) {
 							Name:  "value,v",
 							Usage: "sensitive value of the key to encrypt",
 						},
+						cli.IntFlag{
+							Name:  "random,r",
+							Usage: "automatically generates a string of this length",
+						},
 		      },
 					Action: execute,
 				},
 				{
 					Name:      "read",
 					Usage:     "read secret value",
-					ArgsUsage: "[secret] -k [key]",
+					ArgsUsage: "<secret> -k <key>",
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:  "key,k",
@@ -122,7 +126,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:      "delete",
 					Usage:     "delete secret",
-					ArgsUsage: "[secret]",
+					ArgsUsage: "<secret>",
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:  "key,k",
@@ -140,7 +144,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:      "rotate-from",
 					Usage:     "rotate local secrets encryption from an old transit key",
-					ArgsUsage: "[old_vault_transit_key]",
+					ArgsUsage: "<old_vault_transit_key>",
 					Action: execute,
 				},
 			},
@@ -154,7 +158,7 @@ func Cli(version string) (c *cli.App) {
 		{
 			Name:      "set-secret-path",
 			Usage:     "update the vault secret path in the statefile",
-			ArgsUsage: "[secret_path]",
+			ArgsUsage: "<secret_path>",
 			Action: execute,
 		},
 		{

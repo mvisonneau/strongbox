@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### FEATURES
 - Implemented a function to rotate transit keys [GH-2]
 - Got a full test environment in Makefile, added Vault container
+- Possibility to generate random passwords on secret writes [GH-4]
 
 ### IMPROVEMENTS
 - Added links in Changelog

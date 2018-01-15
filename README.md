@@ -1,6 +1,6 @@
 # mvisonneau/strongbox
 
-[![GoDoc](https://godoc.org/github.com/mvisonneau/strongbox?status.svg)](https://godoc.org/github.com/mvisonneau/strongbox)
+[![GoDoc](https://godoc.org/github.com/mvisonneau/strongbox?status.svg)](https://godoc.org/github.com/mvisonneau/strongbox/app)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mvisonneau/strongbox)](https://goreportcard.com/report/github.com/mvisonneau/strongbox)
 [![Docker Pulls](https://img.shields.io/docker/pulls/mvisonneau/strongbox.svg)](https://hub.docker.com/r/mvisonneau/strongbox/)
 [![Build Status](https://travis-ci.org/mvisonneau/strongbox.svg?branch=master)](https://travis-ci.org/mvisonneau/strongbox)
@@ -177,10 +177,13 @@ secret/test/
 You are now all set to start managing secrets. Lets start by adding a few of them:
 
 ```bash
+# Add defined values
 ~$ strongbox secret write foo -k key -v sensitive
 ~$ strongbox secret write foo -k key2 -v sensitive2
 ~$ strongbox secret write foo -k key3 -v sensitive3
-~$ strongbox secret write bar -k key -v sensitive
+
+# Or ask strongbox to generate random ones
+~$ strongbox secret write bar -k key -r 8
 ```
 
 You can now list all your secrets to see what they look like:
@@ -224,8 +227,8 @@ In order to read the secrets, you can use this function:
 ```bash
 ~$ strongbox secret read foo -k key
 sensitive
-~$ strongbox secret read foo -k key2
-sensitive2
+~$ strongbox secret read bar -k key
+4Qco_ndx
 ```
 
 #### Syncing with Vault

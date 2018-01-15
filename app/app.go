@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/mvisonneau/strongbox/config"
+	"github.com/mvisonneau/strongbox/rand"
 )
 
 var cfg config.Config
@@ -45,13 +46,28 @@ func execute(c *cli.Context) error {
 		v.CreateTransitKey(c.Args().First())
 		s.SetVaultTransitKey(c.Args().First())
 	case "secret write":
-		if c.NArg() != 1 || c.String("key") == "" || c.String("value") == "" {
+		if c.NArg() != 1 ||
+			 c.String("key") == "" ||
+			 ( c.String("value") == "" && c.Int("random") == 0 ) ||
+			 ( c.String("value") != "" && c.Int("random") != 0 ) {
 			cli.ShowSubcommandHelp(c)
 			return cli.NewExitError("", 1)
 		}
+
 		s.Load()
 		v.ConfigureClient()
-		s.WriteSecretKey(c.Args().First(), c.String("key"), v.Encrypt(c.String("value")))
+
+		var secret string
+		if c.String("value") != "" {
+			secret = v.Encrypt(c.String("value"))
+		} else if c.Int("random") != 0 {
+			secret = v.Encrypt(rand.String(c.Int("random")))
+		} else {
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
+		}
+
+		s.WriteSecretKey(c.Args().First(), c.String("key"), secret)
 	case "secret read":
 		if c.NArg() != 1 || c.String("key") == "" {
 			cli.ShowSubcommandHelp(c)
