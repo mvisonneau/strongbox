@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.3] - 2018-01-15
 ### FEATURES
 - Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend [GH-6]
 
 ### IMPROVEMENTS
 - Switched base release container from empty (`scratch`) to `busybox` in order to be able to use it natively with GitLab CI
 
-## [0.1.2] - 2018-01-15
+## [0.1.2] - 2018-01-14
 ### FEATURES
 - Implemented a function to rotate transit keys [GH-2]
 - Got a full test environment in Makefile, added Vault container
@@ -27,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### BUGFIXES
 - Fixed `status` command on empty Vault Cluster
 
-## [0.1.1] - 2018-01-14
+## [0.1.1] - 2018-01-13
 ### IMPROVEMENTS
 - Added CHANGELOG.md
 - Updated dependencies
@@ -49,7 +51,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.2...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.3...HEAD
+[0.1.2]: https://github.com/mvisonneau/strongbox/compare/0.1.3...0.1.3
 [0.1.2]: https://github.com/mvisonneau/strongbox/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/mvisonneau/strongbox/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/mvisonneau/strongbox/tree/0.1.0
