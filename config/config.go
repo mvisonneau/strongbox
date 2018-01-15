@@ -5,8 +5,8 @@ type Config struct {
 	Vault struct {
 		Address  string
 		Token    string
-		RoleId   string
-		SecretId string
+		RoleID   string
+		SecretID string
 	}
 
 	State struct {

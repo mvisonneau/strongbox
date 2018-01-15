@@ -32,7 +32,7 @@ func (v *Vault) ConfigureClient() {
 	}
 
 	if cfg.Vault.Token == "" &&
-		(cfg.Vault.RoleId == "" || cfg.Vault.SecretId == "") {
+		(cfg.Vault.RoleID == "" || cfg.Vault.SecretID == "") {
 		log.Fatal("Either vault-token or (vault-role-id and vault-secret-id) must be defined")
 		os.Exit(1)
 	}
@@ -43,8 +43,8 @@ func (v *Vault) ConfigureClient() {
 		v.Client.SetToken(cfg.Vault.Token)
 	} else {
 		data := map[string]interface{}{
-			"role_id":   cfg.Vault.RoleId,
-			"secret_id": cfg.Vault.SecretId,
+			"role_id":   cfg.Vault.RoleID,
+			"secret_id": cfg.Vault.SecretID,
 		}
 
 		r, err := v.Client.Logical().Write("auth/approle/login", data)

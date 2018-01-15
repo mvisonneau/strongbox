@@ -44,13 +44,13 @@ func Cli(version string) (c *cli.App) {
 			Name:        "vault-role-id",
 			EnvVar:      "VAULT_ROLE_ID",
 			Usage:       "vault role id",
-			Destination: &cfg.Vault.RoleId,
+			Destination: &cfg.Vault.RoleID,
 		},
 		cli.StringFlag{
 			Name:        "vault-secret-id",
 			EnvVar:      "VAULT_SECRET_ID",
 			Usage:       "vault secret id",
-			Destination: &cfg.Vault.SecretId,
+			Destination: &cfg.Vault.SecretID,
 		},
 		cli.StringFlag{
 			Name:        "log-level",
