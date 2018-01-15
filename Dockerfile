@@ -19,12 +19,12 @@ make build
 # RELEASE CONTAINER
 ##
 
-FROM scratch
+FROM busybox:1.28-glibc
 
 WORKDIR /
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/src/github.com/mvisonneau/strongbox/strongbox /
+COPY --from=builder /go/src/github.com/mvisonneau/strongbox/strongbox /usr/local/bin/
 
-ENTRYPOINT ["/strongbox"]
+ENTRYPOINT ["/usr/local/bin/strongbox"]
 CMD [""]
