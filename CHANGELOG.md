@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.2] - 2018-01-15
 ### FEATURES
 - Implemented a function to rotate transit keys [GH-2]
 - Got a full test environment in Makefile, added Vault container
@@ -42,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.1...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.2...HEAD
+[0.1.2]: https://github.com/mvisonneau/strongbox/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/mvisonneau/strongbox/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/mvisonneau/strongbox/tree/0.1.0
