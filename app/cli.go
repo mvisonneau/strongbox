@@ -8,8 +8,8 @@ import (
 
 func init() {
 	cli.VersionPrinter = func(c *cli.Context) {
-    fmt.Println(c.App.Version)
-  }
+		fmt.Println(c.App.Version)
+	}
 }
 
 // Cli : Generates cli configuration for the application
@@ -65,25 +65,25 @@ func Cli(version string) (c *cli.App) {
 					Name:      "use",
 					Usage:     "configure a transit key to use",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action: execute,
+					Action:    execute,
 				},
 				{
 					Name:      "info",
 					Usage:     "get information about the currently used transit key",
 					ArgsUsage: " ",
-					Action: execute,
+					Action:    execute,
 				},
 				{
 					Name:      "list",
 					Usage:     "list available transit keys",
 					ArgsUsage: " ",
-					Action: execute,
+					Action:    execute,
 				},
 				{
 					Name:      "create",
 					Usage:     "create and use a transit key",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action: execute,
+					Action:    execute,
 				},
 			},
 		},
@@ -92,8 +92,8 @@ func Cli(version string) (c *cli.App) {
 			Usage: "perform actions on secrets (locally)",
 			Subcommands: []cli.Command{
 				{
-					Name:   "write",
-					Usage:  "write a secret",
+					Name:      "write",
+					Usage:     "write a secret",
 					ArgsUsage: "<secret> -k <key> [-v <value> or -r <string_length>]",
 					Flags: []cli.Flag{
 						cli.StringFlag{
@@ -108,7 +108,7 @@ func Cli(version string) (c *cli.App) {
 							Name:  "random,r",
 							Usage: "automatically generates a string of this length",
 						},
-		      },
+					},
 					Action: execute,
 				},
 				{
@@ -120,7 +120,7 @@ func Cli(version string) (c *cli.App) {
 							Name:  "key,k",
 							Usage: "key name",
 						},
-		      },
+					},
 					Action: execute,
 				},
 				{
@@ -132,20 +132,20 @@ func Cli(version string) (c *cli.App) {
 							Name:  "key,k",
 							Usage: "key name",
 						},
-		      },
+					},
 					Action: execute,
 				},
 				{
 					Name:      "list",
 					Usage:     "list all managed secrets",
 					ArgsUsage: " ",
-					Action: execute,
+					Action:    execute,
 				},
 				{
 					Name:      "rotate-from",
 					Usage:     "rotate local secrets encryption from an old transit key",
 					ArgsUsage: "<old_vault_transit_key>",
-					Action: execute,
+					Action:    execute,
 				},
 			},
 		},
@@ -153,37 +153,37 @@ func Cli(version string) (c *cli.App) {
 			Name:      "get-secret-path",
 			Usage:     "display the currently used vault secret path in the statefile",
 			ArgsUsage: " ",
-			Action: execute,
+			Action:    execute,
 		},
 		{
 			Name:      "set-secret-path",
 			Usage:     "update the vault secret path in the statefile",
 			ArgsUsage: "<secret_path>",
-			Action: execute,
+			Action:    execute,
 		},
 		{
 			Name:      "init",
 			Usage:     "Create a empty state file at configured location",
 			ArgsUsage: " ",
-			Action: execute,
+			Action:    execute,
 		},
 		{
 			Name:      "status",
 			Usage:     "display current status",
 			ArgsUsage: " ",
-			Action: execute,
+			Action:    execute,
 		},
 		{
 			Name:      "plan",
 			Usage:     "compare local version with vault cluster",
 			ArgsUsage: " ",
-			Action: execute,
+			Action:    execute,
 		},
 		{
 			Name:      "apply",
 			Usage:     "synchronize vault managed secrets",
 			ArgsUsage: " ",
-			Action: execute,
+			Action:    execute,
 		},
 	}
 

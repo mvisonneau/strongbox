@@ -47,9 +47,9 @@ func execute(c *cli.Context) error {
 		s.SetVaultTransitKey(c.Args().First())
 	case "secret write":
 		if c.NArg() != 1 ||
-			 c.String("key") == "" ||
-			 ( c.String("value") == "" && c.Int("random") == 0 ) ||
-			 ( c.String("value") != "" && c.Int("random") != 0 ) {
+			c.String("key") == "" ||
+			(c.String("value") == "" && c.Int("random") == 0) ||
+			(c.String("value") != "" && c.Int("random") != 0) {
 			cli.ShowSubcommandHelp(c)
 			return cli.NewExitError("", 1)
 		}

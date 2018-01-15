@@ -197,7 +197,7 @@ func (s *State) DeleteSecretKey(secret, key string) {
 func (s *State) RotateFromOldTransitKey(key string) {
 	transitKey := s.VaultTransitKey()
 	if transitKey == key {
-		log.Fatalf("%v is already the currently configured key, can't rotate with same key", key )
+		log.Fatalf("%v is already the currently configured key, can't rotate with same key", key)
 		os.Exit(1)
 	}
 
