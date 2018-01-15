@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### FEATURES
-- Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend
+- Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend [GH-6]
 
 ### IMPROVEMENTS
 - Switched base release container from empty (`scratch`) to `busybox` in order to be able to use it natively with GitLab CI

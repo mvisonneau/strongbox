@@ -50,9 +50,6 @@ NAME:
 USAGE:
    strongbox [global options] command [command options] [arguments...]
 
-VERSION:
-   0.1.1
-
 COMMANDS:
      transit          perform actions on transit key/backend
      secret           perform actions on secrets (locally)
@@ -65,13 +62,15 @@ COMMANDS:
      help, h          Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --state FILE, -s FILE  load state from FILE (default: "~/.strongbox_state.yml") [$STRONGBOX_STATE]
-   --vault-addr value     vault endpoint [$VAULT_ADDR]
-   --vault-token value    vault token [$VAULT_TOKEN]
-   --log-level value      log level (debug,info,warn,fatal,panic) (default: "info") [$STRONGBOX_LOG_LEVEL]
-   --log-format value     log format (json,text) (default: "text") [$STRONGBOX_LOG_FORMAT]
-   --help, -h             show help
-   --version, -v          print the version
+   --state FILE, -s FILE    load state from FILE (default: ".strongbox_state.yml") [$STRONGBOX_STATE]
+   --vault-addr value       vault endpoint [$VAULT_ADDR]
+   --vault-token value      vault token [$VAULT_TOKEN]
+   --vault-role-id value    vault role id [$VAULT_ROLE_ID]
+   --vault-secret-id value  vault secret id [$VAULT_SECRET_ID]
+   --log-level value        log level (debug,info,warn,fatal,panic) (default: "info") [$STRONGBOX_LOG_LEVEL]
+   --log-format value       log format (json,text) (default: "text") [$STRONGBOX_LOG_FORMAT]
+   --help, -h               show help
+   --version, -v            print the version
 ```
 
 ## Use case
