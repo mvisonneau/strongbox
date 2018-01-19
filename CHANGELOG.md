@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### FEATURES
+- Added a flag to pass sensitive content through stdin [GH-8]
+
 ### BUGFIXES
 - Lint CI job was failing issue since last commits
 

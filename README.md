@@ -179,9 +179,13 @@ You are now all set to start managing secrets. Lets start by adding a few of the
 # Add defined values
 ~$ strongbox secret write foo -k key -v sensitive
 ~$ strongbox secret write foo -k key2 -v sensitive2
-~$ strongbox secret write foo -k key3 -v sensitive3
 
-# Or ask strongbox to generate random ones
+# Use a masked input
+~$ strongbox secret write foo -k key3 -V
+Sensitive
+Enter a value: ***************
+
+# Or generate random ones
 ~$ strongbox secret write bar -k key -r 8
 ```
 
