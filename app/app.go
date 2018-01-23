@@ -8,6 +8,7 @@ import (
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"github.com/tcnksm/go-input"
 
 	"github.com/mvisonneau/strongbox/config"
 	"github.com/mvisonneau/strongbox/rand"
@@ -48,8 +49,10 @@ func execute(c *cli.Context) error {
 	case "secret write":
 		if c.NArg() != 1 ||
 			c.String("key") == "" ||
-			(c.String("value") == "" && c.Int("random") == 0) ||
-			(c.String("value") != "" && c.Int("random") != 0) {
+			( c.String("value") == "" && ! c.Bool("masked_value") && c.Int("random") == 0 ) ||
+			( c.String("value") != "" && c.Bool("masked_value") ) ||
+			( c.String("value") != "" && c.Int("random") != 0  ) ||
+			( c.Bool("masked_value") && c.Int("random") != 0 ) {
 			cli.ShowSubcommandHelp(c)
 			return cli.NewExitError("", 1)
 		}
@@ -58,8 +61,25 @@ func execute(c *cli.Context) error {
 		v.ConfigureClient()
 
 		var secret string
-		if c.String("value") != "" {
-			secret = v.Encrypt(c.String("value"))
+		if c.Bool("masked_value") {
+			ui := &input.UI{
+				Writer: os.Stdout,
+				Reader: os.Stdin,
+			}
+
+			value, err := ui.Ask("Sensitive", &input.Options{
+				Required:    true,
+				Mask:        true,
+				MaskDefault: true,
+			})
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			secret = v.Encrypt(value)
+		} else if c.String("value") != "" {
+			 secret = v.Encrypt(c.String("value"))
 		} else if c.Int("random") != 0 {
 			secret = v.Encrypt(rand.String(c.Int("random")))
 		} else {

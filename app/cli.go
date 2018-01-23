@@ -106,7 +106,7 @@ func Cli(version string) (c *cli.App) {
 				{
 					Name:      "write",
 					Usage:     "write a secret",
-					ArgsUsage: "<secret> -k <key> [-v <value> or -r <string_length>]",
+					ArgsUsage: "<secret> -k <key> [-v <value> or -r <string_length> or -V]",
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:  "key,k",
@@ -115,6 +115,10 @@ func Cli(version string) (c *cli.App) {
 						cli.StringFlag{
 							Name:  "value,v",
 							Usage: "sensitive value of the key to encrypt",
+						},
+						cli.BoolFlag{
+							Name:  "masked_value,V",
+							Usage: "sensitive value of the key to encrypt (stdin)",
 						},
 						cli.IntFlag{
 							Name:  "random,r",

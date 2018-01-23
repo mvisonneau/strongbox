@@ -119,6 +119,12 @@
   version = "v1.0.4"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/tcnksm/go-input"
+  packages = ["."]
+  revision = "bbe13e92fa7dda71a4e012e3f427df11866c7651"
+
+[[projects]]
   name = "github.com/urfave/cli"
   packages = ["."]
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
@@ -180,6 +186,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "958c03ad15397f154523ba3ad0a0866bcc8d7cfb7c12d085b103a007cb8dcced"
+  inputs-digest = "c08fe535864b412411a96ecc1b13bfb7e113ed6518f810d863118b71404653e5"
   solver-name = "gps-cdcl"
   solver-version = 1
