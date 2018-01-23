@@ -4,7 +4,7 @@ go:
   - 1.9
 go_import_path: github.com/mvisonneau/strongbox
 install:
-  - make prereqs
+  - make setup
   - make deps
   - go get -u github.com/mattn/goveralls
 script:
