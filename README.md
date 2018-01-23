@@ -304,4 +304,4 @@ This command will spin up a Vault container and a build one with everything requ
 
 ## Contribute
 
-Contributions are more than welcome! Feel free to submit a [PR](https://github.com/mvisonneau/strongbox).
+Contributions are more than welcome! Feel free to submit a [PR](https://github.com/mvisonneau/strongbox/pulls).
