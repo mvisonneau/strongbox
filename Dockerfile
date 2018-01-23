@@ -8,7 +8,7 @@ WORKDIR /go/src/github.com/mvisonneau/strongbox
 
 COPY Makefile .
 RUN \
-make prereqs
+make setup
 
 COPY . .
 RUN \
