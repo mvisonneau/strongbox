@@ -7,8 +7,9 @@ import (
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.?!{}[]|"
 
-var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
 
+// String : Generates a random string of a given length
 func String(length int) string {
 	b := make([]byte, length)
 	for i := range b {
