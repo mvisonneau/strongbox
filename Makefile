@@ -1,8 +1,8 @@
-NAME    := strongbox
-VERSION := $(shell git describe --tags --abbrev=1)
-FILES   := $(shell git ls-files '*.go')
-LDFLAGS := -linkmode external -extldflags -static -X 'main.version=$(VERSION)'
-
+NAME          := strongbox
+VERSION       := $(shell git describe --tags --abbrev=1)
+FILES         := $(shell git ls-files '*.go')
+LDFLAGS       := -linkmode external -extldflags -static -X 'main.version=$(VERSION)'
+VAULT_VERSION := 0.9.3
 .DEFAULT_GOAL := help
 
 .PHONY: setup
@@ -57,19 +57,20 @@ coverage: ## Generates coverage report
 
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
-	@docker run -d --name vault vault
+	@docker run -d --name vault vault:$(VAULT_VERSION)
 	@sleep 1
 	@docker run -it --rm \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
-		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3) \
-		vault mount transit
+		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
+		vault secrets enable transit
 	@docker run -it --rm \
 		-v $(shell pwd):/go/src/github.com/mvisonneau/$(NAME) \
 		-w /go/src/github.com/mvisonneau/$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
-		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3) \
+		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
 		golang:1.9 \
 		/bin/bash -c 'make setup; make deps; make install; bash'
+	@docker kill vault
 	@docker rm vault -f
 
 .PHONY: all

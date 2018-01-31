@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### IMPROVEMENTS
 - Updated dependencies
+- Support Vault 0.9.3 for development env
 
 ## [0.1.3] - 2018-01-15
 ### FEATURES
