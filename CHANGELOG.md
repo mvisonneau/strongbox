@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### BUGFIXES
 - Lint CI job was failing issue since last commits
 
+### IMPROVEMENTS
+- Updated dependencies
+
 ## [0.1.3] - 2018-01-15
 ### FEATURES
 - Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend [GH-6]
