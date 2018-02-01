@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### FEATURES
-- Added a flag to pass sensitive content through stdin [GH-8]
+- Added a flag to pass sensitive content through stdin - #8
 - New function `strongbox transit delete <transit_key_name>`
 
 ### BUGFIXES
@@ -16,20 +16,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### IMPROVEMENTS
 - Updated dependencies
-- Support Vault 0.9.3 for development env
+- Support Vault `0.9.3` for development env
 
 ## [0.1.3] - 2018-01-15
 ### FEATURES
-- Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend [GH-6]
+- Embedded authentication against Vault using [approle](https://www.vaultproject.io/docs/auth/approle.html) auth backend - #6
 
 ### IMPROVEMENTS
 - Switched base release container from empty (`scratch`) to `busybox` in order to be able to use it natively with GitLab CI
 
 ## [0.1.2] - 2018-01-14
 ### FEATURES
-- Implemented a function to rotate transit keys [GH-2]
+- Implemented a function to rotate transit keys - #2
 - Got a full test environment in Makefile, added Vault container
-- Possibility to generate random passwords on secret writes [GH-4]
+- Possibility to generate random passwords on secret writes - #4
 
 ### IMPROVEMENTS
 - Added links in Changelog
