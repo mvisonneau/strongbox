@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### FEATURES
 - Added a flag to pass sensitive content through stdin [GH-8]
+- New function `strongbox transit delete <transit_key_name>`
 
 ### BUGFIXES
 - Lint CI job was failing issue since last commits
+- Fixed a bug while returning an empty transit key list
 
 ### IMPROVEMENTS
 - Updated dependencies

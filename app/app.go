@@ -46,6 +46,13 @@ func execute(c *cli.Context) error {
 		v.ConfigureClient()
 		v.CreateTransitKey(c.Args().First())
 		s.SetVaultTransitKey(c.Args().First())
+	case "transit delete":
+		if c.NArg() != 1 {
+			cli.ShowSubcommandHelp(c)
+			return cli.NewExitError("", 1)
+		}
+		v.ConfigureClient()
+		v.DeleteTransitKey(c.Args().First())
 	case "secret write":
 		if c.NArg() != 1 ||
 			c.String("key") == "" ||
@@ -196,11 +203,11 @@ func run(action string) {
 	if eq {
 		color.Green("Nothing to do! Local state and remote Vault config are in sync.")
 	} else {
-		compare(local, remote, action)
+		reconcile(local, remote, action)
 	}
 }
 
-func compare(local map[string]map[string]string, remote map[string]map[string]string, action string) {
+func reconcile(local map[string]map[string]string, remote map[string]map[string]string, action string) {
 	var addSecret, deleteSecret []string
 	addSecretKey := make(map[string][]string)
 	deleteSecretKey := make(map[string][]string)

@@ -85,8 +85,7 @@ func (v *Vault) GetTransitInfo() {
 
 // CreateTransitKey : Create a new transit key in Vault
 func (v *Vault) CreateTransitKey(key string) {
-	var payload map[string]interface{}
-	_, err := v.Client.Logical().Write("transit/keys/"+key, payload)
+	_, err := v.Client.Logical().Write("transit/keys/"+key, make(map[string]interface{}))
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
 		os.Exit(1)
@@ -103,12 +102,32 @@ func (v *Vault) ListTransitKeys() {
 		os.Exit(1)
 	}
 
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Key"})
-	for _, l := range d.Data["keys"].([]interface{}) {
-		table.Append([]string{l.(string)})
+	if d != nil {
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"Key"})
+		for _, l := range d.Data["keys"].([]interface{}) {
+			table.Append([]string{l.(string)})
+		}
+		table.Render()
 	}
-	table.Render()
+}
+
+// DeleteTransitKey : Delete a transit key from Vault
+func (v *Vault) DeleteTransitKey(key string) {
+	var p = make(map[string]interface{})
+	p["deletion_allowed"] = "true"
+	_, err := v.Client.Logical().Write("transit/keys/"+key+"/config", p)
+	if err != nil {
+		log.Fatalf("Vault error: %v", err)
+		os.Exit(1)
+	}
+
+	_, err = v.Client.Logical().Delete("transit/keys/"+key)
+	if err != nil {
+		log.Fatalf("Vault error: %v", err)
+		os.Exit(1)
+	}
+	color.Green("=> Deleted transit key '%v' from Vault", key)
 }
 
 // ListSecrets : Do what it says

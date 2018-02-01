@@ -97,6 +97,12 @@ func Cli(version string) (c *cli.App) {
 					ArgsUsage: "<vault_transit_key_name>",
 					Action:    execute,
 				},
+				{
+					Name:      "delete",
+					Usage:     "delete an existing transit key from Vault",
+					ArgsUsage: "<vault_transit_key_name>",
+					Action:    execute,
+				},
 			},
 		},
 		{
