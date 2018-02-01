@@ -122,7 +122,7 @@ func (v *Vault) DeleteTransitKey(key string) {
 		os.Exit(1)
 	}
 
-	_, err = v.Client.Logical().Delete("transit/keys/"+key)
+	_, err = v.Client.Logical().Delete("transit/keys/" + key)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
 		os.Exit(1)
