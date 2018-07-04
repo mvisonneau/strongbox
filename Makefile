@@ -62,7 +62,7 @@ dev-env: ## Build a local development environment using Docker
 	@docker run -it --rm \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
-		vault secrets enable transit
+		vault:$(VAULT_VERSION) secrets enable transit
 	@docker run -it --rm \
 		-v $(shell pwd):/go/src/github.com/mvisonneau/$(NAME) \
 		-w /go/src/github.com/mvisonneau/$(NAME) \

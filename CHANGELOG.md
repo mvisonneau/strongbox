@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### IMPROVEMENTS
+- Make the secondary container in dev-env use the same version of Vault
+
 ## [0.1.4] - 2018-02-01
 ### FEATURES
 - Added a flag to pass sensitive content through stdin - #8
