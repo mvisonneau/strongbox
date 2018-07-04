@@ -164,7 +164,9 @@ func (v *Vault) Status() {
 
 	secretsCount := 0
 	if d != nil {
-		secretsCount = len(d.Data["keys"].([]interface{}))
+		if keys, ok := d.Data["keys"]; ok {
+    	secretsCount = len(keys.([]interface{}))
+		}
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
