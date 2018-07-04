@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### IMPROVEMENTS
 - Make the secondary container in dev-env use the same version of Vault
+- Added `IPC_LOCK` capabilities to the dev-env docker container
 
 ## [0.1.4] - 2018-02-01
 ### FEATURES

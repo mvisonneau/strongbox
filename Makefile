@@ -57,7 +57,7 @@ coverage: ## Generates coverage report
 
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
-	@docker run -d --name vault vault:$(VAULT_VERSION)
+	@docker run -d --cap-add IPC_LOCK --name vault vault:$(VAULT_VERSION)
 	@sleep 1
 	@docker run -it --rm \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
