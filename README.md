@@ -14,6 +14,10 @@ Vault is really good at safely storing data. Allowing us to query an HTTP endpoi
 
 The idea is to leverage the [Vault Transit Secret backend](https://www.vaultproject.io/docs/secrets/transit/) in order to cipher/decipher our secrets and store them securely. The goal being, end up with a file that can easily be used in order to recover a lost secret/key. As well as storing it safely into a **git repository** for instance.
 
+## Compatibility
+
+For the moment `strongbox` only supports the **version 1** of the [Vault K/V](https://www.vaultproject.io/api/secret/kv/kv-v1.html)
+
 ## Installation
 
 ### Get started and try it out in less than a minute

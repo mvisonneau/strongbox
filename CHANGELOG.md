@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### IMPROVEMENTS
 - Made the secondary container in dev-env use the same version of Vault
 - Added `IPC_LOCK` capabilities to the dev-env docker container
+- Upgraded **go** dependencies
+- Upgraded **go** to 1.10
+- Upgraded Vault libraries to `0.9.6`
 
 ### OTHERS
 - Updated license to `Apache 2.0`
