@@ -165,7 +165,7 @@ func (v *Vault) Status() {
 	secretsCount := 0
 	if d != nil {
 		if keys, ok := d.Data["keys"]; ok {
-    	secretsCount = len(keys.([]interface{}))
+			secretsCount = len(keys.([]interface{}))
 		}
 	}
 
