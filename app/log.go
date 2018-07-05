@@ -1,28 +1,27 @@
 package app
 
 import (
-	"fmt"
+	"errors"
 	"os"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func configureLogging() error {
-	level, _ := log.ParseLevel(cfg.Log.Level)
-	log.SetLevel(level)
+func configureLogging(level string, format string) error {
+	parsedLevel, _ := log.ParseLevel(level)
+	log.SetLevel(parsedLevel)
 
 	formatter := &log.TextFormatter{
 		FullTimestamp: true,
 	}
 	log.SetFormatter(formatter)
 
-	switch cfg.Log.Format {
+	switch format {
 	case "text":
 	case "json":
 		log.SetFormatter(&log.JSONFormatter{})
 	default:
-		fmt.Printf("Invalid log format '%v'\n", cfg.Log.Format)
-		os.Exit(1)
+		return errors.New("Invalid log format")
 	}
 
 	log.SetOutput(os.Stdout)

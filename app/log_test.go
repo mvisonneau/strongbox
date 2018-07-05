@@ -1,17 +1,13 @@
 package app
 
 import (
-	"os"
-	"os/exec"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func TestConfigureLoggingFatalText(t *testing.T) {
-	cfg.Log.Level = "fatal"
-	cfg.Log.Format = "text"
-	configureLogging()
+	configureLogging("fatal", "text")
 
 	if log.GetLevel() != log.FatalLevel {
 		t.Fatalf("Expected log.Level to be 'fatal' but got %s", log.GetLevel())
@@ -19,18 +15,25 @@ func TestConfigureLoggingFatalText(t *testing.T) {
 }
 
 func TestConfigureLoggingDefault(t *testing.T) {
-	cfg.Log.Level = "fatal"
-	cfg.Log.Format = "default"
+	err := configureLogging("fatal", "default")
 
-	if os.Getenv("BE_CRASHER") == "1" {
-		configureLogging()
-		return
+	if err == nil {
+		t.Fatal("Expected function to return an error, got nil")
 	}
-	cmd := exec.Command(os.Args[0], "-test.run=TestConfigureLoggingDefault")
-	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
-	err := cmd.Run()
-	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
-		return
+}
+
+func TestConfigureLoggingJson(t *testing.T) {
+	err := configureLogging("debug", "json")
+
+	if err != nil {
+		t.Fatalf("Function is not expected to return an error, got '%s'", err.Error())
 	}
-	t.Fatalf("Process ran with err %v, wanted exit status 1", err)
+}
+
+func TestConfigureLoggingInvalidLogFormat(t *testing.T) {
+	err := configureLogging("foo", "default")
+
+	if err == nil {
+		t.Fatal("Expected function to return an error, got nil")
+	}
 }

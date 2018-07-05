@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"time"
 
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
@@ -16,10 +17,16 @@ import (
 
 var cfg config.Config
 var s State
+var start time.Time
 var v Vault
 
 func execute(c *cli.Context) error {
-	configureLogging()
+	start = time.Now()
+	err := configureLogging(cfg.Log.Level, cfg.Log.Format)
+	if err != nil {
+		return exit(cli.NewExitError(err.Error(), 1))
+	}
+
 	log.Debugf("Function: %v", c.Command.FullName())
 
 	switch c.Command.FullName() {
@@ -158,7 +165,7 @@ func execute(c *cli.Context) error {
 	return nil
 }
 
-func run(action string) {
+func run(action string) error {
 	s.Load()
 	v.ConfigureClient()
 
@@ -177,8 +184,7 @@ func run(action string) {
 	remote := make(map[string]map[string]string)
 	d, err := v.Client.Logical().List(s.Vault.SecretPath)
 	if err != nil {
-		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
+		return exit(cli.NewExitError(err.Error(), 1))
 	}
 
 	if d != nil {
@@ -190,8 +196,7 @@ func run(action string) {
 
 				l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
 				if err != nil {
-					log.Fatalf("Vault error: %v", err)
-					os.Exit(1)
+					return exit(cli.NewExitError(err.Error(), 1))
 				}
 
 				for m, n := range l.Data {
@@ -207,9 +212,11 @@ func run(action string) {
 	} else {
 		reconcile(local, remote, action)
 	}
+
+	return nil
 }
 
-func reconcile(local map[string]map[string]string, remote map[string]map[string]string, action string) {
+func reconcile(local map[string]map[string]string, remote map[string]map[string]string, action string) error {
 	var addSecret, deleteSecret []string
 	addSecretKey := make(map[string][]string)
 	deleteSecretKey := make(map[string][]string)
@@ -333,7 +340,13 @@ func reconcile(local map[string]map[string]string, remote map[string]map[string]
 			v.WriteSecret(k, payload)
 		}
 	default:
-		log.Fatal("No action specified")
-		os.Exit(1)
+		return exit(cli.NewExitError("No action specified", 1))
 	}
+
+	return nil
+}
+
+func exit(err error) error {
+	log.Debugf("Executed in %s, exiting..", time.Since(start))
+	return err
 }
