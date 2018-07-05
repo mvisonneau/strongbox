@@ -182,19 +182,21 @@ func run(action string) {
 	}
 
 	if d != nil {
-		for _, k := range d.Data["keys"].([]interface{}) {
-			if remote[k.(string)] == nil {
-				remote[k.(string)] = make(map[string]string)
-			}
+		if keys, ok := d.Data["keys"]; ok {
+			for _, k := range keys.([]interface{}) {
+				if remote[k.(string)] == nil {
+					remote[k.(string)] = make(map[string]string)
+				}
 
-			l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
-			if err != nil {
-				log.Fatalf("Vault error: %v", err)
-				os.Exit(1)
-			}
+				l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
+				if err != nil {
+					log.Fatalf("Vault error: %v", err)
+					os.Exit(1)
+				}
 
-			for m, n := range l.Data {
-				remote[k.(string)][m] = n.(string)
+				for m, n := range l.Data {
+					remote[k.(string)][m] = n.(string)
+				}
 			}
 		}
 	}

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### BUGFIXES
-- Fixed a panic issue on `status` command when the Vault path doesn't contain any value
+- Fixed a panic issue on `status` and `plan` command when the Vault path doesn't contain any value
 
 ### IMPROVEMENTS
 - Made the secondary container in dev-env use the same version of Vault
