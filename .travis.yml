@@ -1,7 +1,7 @@
 ---
 language: go
 go:
-  - 1.12
+  - '1.12'
 go_import_path: github.com/mvisonneau/strongbox
 install:
   - make setup
