@@ -3,3 +3,4 @@ vendor
 vendor.orig
 *.out
 .strongbox_state.yml
+dist

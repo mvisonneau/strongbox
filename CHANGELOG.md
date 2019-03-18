@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### BUGFIXES
 - Fixed Dockerfile build
 - Fixed Travis CI builds
+- Wait a bit longer for Vault container to be ready in dev-env
+- Removed the IPC_LOCK capability over the build container
+- Fixed the ldflags breaking darwin and windows builds
 
 ### IMPROVEMENTS
+- Also build for arm64
+- ignore dist folder in git
+- Do not use go mod for build dependencies
 - Tidied `go.mod`
 
 ## [0.1.5] - 2019-03-18

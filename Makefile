@@ -1,7 +1,7 @@
 NAME          := strongbox
 VERSION       := $(shell git describe --tags --abbrev=1)
 FILES         := $(shell git ls-files '*.go')
-LDFLAGS       := -linkmode external -extldflags -static -X 'main.version=$(VERSION)'
+LDFLAGS       := -w -extldflags "-static" -X 'main.version=$(VERSION)'
 REGISTRY      := mvisonneau/$(NAME)
 VAULT_VERSION := 1.0.3
 .DEFAULT_GOAL := help
@@ -10,11 +10,11 @@ export GO111MODULE=on
 
 .PHONY: setup
 setup: ## Install required libraries/tools
-	go get -u -v github.com/mitchellh/gox
-	go get -u -v github.com/tcnksm/ghr
-	go get -u -v golang.org/x/lint/golint
-	go get -u -v golang.org/x/tools/cmd/cover
-	go get -u -v golang.org/x/tools/cmd/goimports
+	GO111MODULE=off go get -u -v github.com/mitchellh/gox
+	GO111MODULE=off go get -u -v github.com/tcnksm/ghr
+	GO111MODULE=off go get -u -v golang.org/x/lint/golint
+	GO111MODULE=off go get -u -v golang.org/x/tools/cmd/cover
+	GO111MODULE=off go get -u -v golang.org/x/tools/cmd/goimports
 
 .PHONY: fmt
 fmt: ## Format source code
@@ -36,8 +36,8 @@ install: ## Build and install locally the binary (dev purpose)
 .PHONY: build
 build: ## Build the binary
 	mkdir -p dist; rm -rf dist/*
-	CGO_ENABLED=0 gox -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 windows/386 windows/amd64" -ldflags "$(LDFLAGS)" -output dist/$(NAME)_{{.OS}}_{{.Arch}}
-	strip dist/*_linux_*
+	CGO_ENABLED=0 gox -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 linux/arm64 windows/386 windows/amd64" -ldflags "$(LDFLAGS)" -output dist/$(NAME)_{{.OS}}_{{.Arch}}
+	strip dist/*_linux_amd64 dist/*_linux_386
 
 .PHONY: build-docker
 build-docker:
@@ -64,14 +64,14 @@ coverage: ## Generates coverage report
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
 	@docker run -d --cap-add IPC_LOCK --name vault vault:$(VAULT_VERSION)
-	@sleep 1
+	@sleep 2
 	@docker run -it --rm --cap-add IPC_LOCK \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
 		vault:$(VAULT_VERSION) secrets enable transit
-	@docker run -it --rm --cap-add IPC_LOCK \
-		-v $(shell pwd):/go/src/github.com/mvisonneau/$(NAME) \
-		-w /go/src/github.com/mvisonneau/$(NAME) \
+	@docker run -it --rm \
+		-v $(shell pwd):/$(NAME) \
+		-w /$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
 		golang:1.12 \
