@@ -6,10 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.5] - 2019-03-18
+### FEATURES
+- Added gox and ghr features to release binaries
+
 ### BUGFIXES
 - Fixed a panic issue on `status` and `plan` command when the Vault path doesn't contain any value
 
 ### IMPROVEMENTS
+- Updated Travis CI configuration
 - Upgraded Vault to `1.0.3`
 - Upgraded to golang `1.12`
 - Switched to `gomodules`
@@ -17,8 +23,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated all dependencies to their latest versions
 - Made the secondary container in dev-env use the same version of Vault
 - Added `IPC_LOCK` capabilities to the dev-env docker container
-- Upgraded **go** dependencies
-- Upgraded **go** to 1.10
 - Upgraded Vault libraries to `0.9.6`
 
 ### OTHERS
@@ -81,7 +85,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.4...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.5...HEAD
+[0.1.5]: https://github.com/mvisonneau/strongbox/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/mvisonneau/strongbox/compare/0.1.3...0.1.4
 [0.1.3]: https://github.com/mvisonneau/strongbox/compare/0.1.2...0.1.3
 [0.1.2]: https://github.com/mvisonneau/strongbox/compare/0.1.1...0.1.2
