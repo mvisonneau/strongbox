@@ -4,7 +4,7 @@
 
 FROM golang:1.12 as builder
 
-WORKDIR /go/src/github.com/mvisonneau/strongbox
+WORKDIR /build
 
 COPY Makefile .
 RUN \
@@ -12,18 +12,18 @@ make setup
 
 COPY . .
 RUN \
-make build
+make build-docker
 
 ##
 # RELEASE CONTAINER
 ##
 
-FROM busybox:1.28-glibc
+FROM busybox:1.30-glibc
 
 WORKDIR /
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/src/github.com/mvisonneau/strongbox/strongbox /usr/local/bin/
+COPY --from=builder /build/strongbox /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/strongbox"]
 CMD [""]
