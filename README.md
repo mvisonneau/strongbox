@@ -20,6 +20,23 @@ For the moment `strongbox` only supports the **version 1** of the [Vault K/V](ht
 
 ## Installation
 
+
+### Download binary
+
+Have a look onto the [latest release page](https://github.com/mvisonneau/strongbox/releases/latest) and pick your flavor. Platform we are building for can be found in the [Makefile](https://github.com/mvisonneau/strongbox/blob/master/Makefile#L39).
+
+### Go
+
+```bash
+~$ go get -u github.com/mvisonneau/strongbox
+```
+
+### Docker
+
+```bash
+~$ docker fetch mvisonneau/strongbox
+```
+
 ### Get started and try it out in less than a minute
 
 - Prereqs : **git**, **make** and **docker**
@@ -39,10 +56,6 @@ If you want to have a quick look and see how it works and/or you don't already h
 ~$ strongbox status
 ```
 
-### Regular installation
-
-- Go : `go get -u github.com/mvisonneau/strongbox`
-- Docker : `docker fetch mvisonneau/strongbox`
 
 ## Usage
 
