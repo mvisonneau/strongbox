@@ -2,7 +2,7 @@
 # BUILD CONTAINER
 ##
 
-FROM golang:1.9.2 as builder
+FROM golang:1.12 as builder
 
 WORKDIR /go/src/github.com/mvisonneau/strongbox
 
@@ -12,7 +12,6 @@ make setup
 
 COPY . .
 RUN \
-make deps ;\
 make build
 
 ##

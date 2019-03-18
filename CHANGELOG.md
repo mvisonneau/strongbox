@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a panic issue on `status` and `plan` command when the Vault path doesn't contain any value
 
 ### IMPROVEMENTS
+- Upgraded to golang `1.12`
+- Switched to `gomodules`
+- Enhanced makefile
+- Updated all dependencies to their latest versions
 - Made the secondary container in dev-env use the same version of Vault
 - Added `IPC_LOCK` capabilities to the dev-env docker container
 - Upgraded **go** dependencies

@@ -1,7 +1,0 @@
-[[constraint]]
-  branch = "v2"
-  name = "gopkg.in/yaml.v2"
-
-[[constraint]]
-  version = "v0.9.*"
-  name = "github.com/hashicorp/vault"

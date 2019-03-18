@@ -2,15 +2,19 @@ NAME          := strongbox
 VERSION       := $(shell git describe --tags --abbrev=1)
 FILES         := $(shell git ls-files '*.go')
 LDFLAGS       := -linkmode external -extldflags -static -X 'main.version=$(VERSION)'
+REGISTRY      := mvisonneau/$(NAME)
 VAULT_VERSION := 0.9.6
 .DEFAULT_GOAL := help
 
+export GO111MODULE=on
+
 .PHONY: setup
 setup: ## Install required libraries/tools
-	go get -u -v github.com/golang/dep/cmd/dep
-	go get -u -v golang.org/x/tools/cmd/goimports
+	go get -u -v github.com/mitchellh/gox
+	go get -u -v github.com/tcnksm/ghr
+	go get -u -v golang.org/x/lint/golint
 	go get -u -v golang.org/x/tools/cmd/cover
-	go get -u -v github.com/golang/lint/golint
+	go get -u -v golang.org/x/tools/cmd/goimports
 
 .PHONY: fmt
 fmt: ## Format source code
@@ -18,7 +22,7 @@ fmt: ## Format source code
 
 .PHONY: lint
 lint: ## Run golint and go vet against the codebase
-	golint -set_exit_status . app config rand
+	golint -set_exit_status .
 	go vet ./...
 
 .PHONY: test
@@ -31,12 +35,18 @@ install: ## Build and install locally the binary (dev purpose)
 
 .PHONY: build
 build: ## Build the binary
-	CGO_ENABLED=1 go build -ldflags "$(LDFLAGS)" -o $(NAME) main.go
+	mkdir -p dist; rm -rf dist/*
+	CGO_ENABLED=0 gox -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 windows/386 windows/amd64" -ldflags "$(LDFLAGS)" -output dist/$(NAME)_{{.OS}}_{{.Arch}}
+	strip dist/*_linux_*
+
+.PHONY: build-docker
+build-docker:
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" .
 	strip $(NAME)
 
-.PHONY: deps
-deps: ## Fetch all dependencies
-	dep ensure -v
+.PHONY: publish-github
+publish-github: ## Send the binaries onto the GitHub release
+	ghr -u mvisonneau -replace $(VERSION) dist
 
 .PHONY: imports
 imports: ## Fixes the syntax (linting) of the codebase
@@ -50,26 +60,22 @@ clean: ## Remove binary if it exists
 coverage: ## Generates coverage report
 	rm -rf *.out
 	go test -coverprofile=coverage.out
-	@for i in app config; do \
-	 	go test -coverprofile=$$i.coverage.out github.com/mvisonneau/$(NAME)/$$i; \
-		tail -n +2 $$i.coverage.out >> coverage.out; \
-	done
 
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
 	@docker run -d --cap-add IPC_LOCK --name vault vault:$(VAULT_VERSION)
 	@sleep 1
-	@docker run -it --rm \
+	@docker run -it --rm --cap-add IPC_LOCK \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
 		vault:$(VAULT_VERSION) secrets enable transit
-	@docker run -it --rm \
+	@docker run -it --rm --cap-add IPC_LOCK \
 		-v $(shell pwd):/go/src/github.com/mvisonneau/$(NAME) \
 		-w /go/src/github.com/mvisonneau/$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
-		golang:1.10 \
-		/bin/bash -c 'make setup; make deps; make install; bash'
+		golang:1.12 \
+		/bin/bash -c 'make setup; make install; bash'
 	@docker kill vault
 	@docker rm vault -f
 
