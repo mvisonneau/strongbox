@@ -61,7 +61,7 @@ clean: ## Remove binary if it exists
 .PHONY: coverage
 coverage: ## Generates coverage report
 	rm -rf *.out
-	go test -coverprofile=coverage.out
+	go test -v ./... -coverprofile=coverage.out
 
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
