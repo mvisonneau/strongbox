@@ -3,7 +3,7 @@ VERSION       := $(shell git describe --tags --abbrev=1)
 FILES         := $(shell git ls-files '*.go')
 LDFLAGS       := -w -extldflags "-static" -X 'main.version=$(VERSION)'
 REGISTRY      := mvisonneau/$(NAME)
-VAULT_VERSION := 1.0.3
+VAULT_VERSION := 1.1.0
 .DEFAULT_GOAL := help
 
 export GO111MODULE=on

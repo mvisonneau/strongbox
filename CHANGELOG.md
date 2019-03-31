@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### ENHANCEMENTS
 - Optimized Makefile
+- Upgraded Vault in test container to `1.1.0`
 
 ### BUGFIXES
 - Fixed test coverage reports
