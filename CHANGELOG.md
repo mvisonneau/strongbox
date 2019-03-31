@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### FEATURES
+- Release binaries are now automatically built and published from the CI
+
+### ENHANCEMENTS
+- Optimized Makefile
+
+### OTHERS
+- Moved CI from `Travis` to `Drone`
 
 ## [0.1.6] - 2019-03-28
 ### BUGFIXES
@@ -16,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed the ldflags breaking darwin and windows builds
 
 ### IMPROVEMENTS
-- Also build for arm64
+- Also build for **arm64**
 - ignore dist folder in git
 - Do not use go mod for build dependencies
 - Tidied `go.mod`
