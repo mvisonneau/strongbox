@@ -26,7 +26,7 @@ lint: setup ## Run golint, goimports and go vet against the codebase
 	golint -set_exit_status .
 	go vet ./...
 	goimports -d $(FILES) > goimports.out
-	test -s goimports.out && cat goimports.out; rm goimports.out; exit 1 || rm goimports.out
+	@if [ -s goimports.out ]; then cat goimports.out; rm goimports.out; exit 1; else rm goimports.out; fi
 
 .PHONY: test
 test: ## Run the tests against the codebase
