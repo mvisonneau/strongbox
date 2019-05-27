@@ -2,7 +2,7 @@ NAME          := strongbox
 VERSION       := $(shell git describe --tags --abbrev=1)
 FILES         := $(shell git ls-files '*.go')
 LDFLAGS       := -w -extldflags "-static" -X 'main.version=$(VERSION)'
-REGISTRY      := mvisonneau/$(NAME)
+REPOSITORY    := mvisonneau/$(NAME)
 VAULT_VERSION := 1.1.0
 .DEFAULT_GOAL := help
 
@@ -81,6 +81,10 @@ dev-env: ## Build a local development environment using Docker
 		/bin/bash -c 'make setup; make install; bash'
 	@docker kill vault
 	@docker rm vault -f
+
+.PHONY: sign-drone
+sign-drone: ## Sign Drone CI configuration
+	drone sign $(REPOSITORY) --save
 
 .PHONY: all
 all: lint test build coverage ## Test, builds and ship package for all supported platforms

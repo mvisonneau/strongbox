@@ -3,12 +3,26 @@ kind: pipeline
 name: test
 
 steps:
-  - name: test
+  - name: lint
     image: golang:1.12
     commands:
       - make lint
+  - name: test
+    image: golang:1.12
+    commands:
       - make test
+  - name: build
+    image: golang:1.12
+    commands:
       - make build
+  - name: all_ok
+    image: busybox
+    depends_on:
+      - lint
+      - test
+      - build
+    commands:
+      - 'true'
 
 trigger:
   event:
@@ -68,6 +82,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: a92fca88ad5c2488342bdcd5dad9ac3cffa6f06bfd5834d8a1285db5be30f4a2
+hmac: d4ebde4e77c2bc835b5a76b177aebdd5d6584cd2b4176ba48cc5bc098c551e12
 
 ...
