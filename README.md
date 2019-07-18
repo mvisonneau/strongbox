@@ -88,7 +88,6 @@ If you want to have a quick look and see how it works and/or you don't already h
 ~$ strongbox status
 ```
 
-
 ## Usage
 
 ```bash
@@ -145,7 +144,7 @@ Let's configure them:
 ~$ export STRONGBOX_STATE=/tmp/state.yml
 ```
 
-### Run it!
+### Run it
 
 #### Init
 
@@ -312,12 +311,12 @@ bar
 foo
 
 ~$ vault read secret/test/foo
-Key             	Value
----             	-----
-refresh_interval	768h0m0s
-key             	sensitive
-key2            	sensitive2
-key3            	sensitive3
+Key               Value
+---               -----
+refresh_interval  768h0m0s
+key               sensitive
+key2              sensitive2
+key3              sensitive3
 ```
 
 #### Rotate secrets
