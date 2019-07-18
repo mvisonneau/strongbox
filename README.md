@@ -40,6 +40,13 @@ Have a look onto the [latest release page](https://github.com/mvisonneau/strongb
 ~$ docker run -it --rm mvisonneau/strongbox
 ```
 
+### Scoop
+
+```bash
+~$ scoop bucket add https://github.com/mvisonneau/scoops
+~$ scoop install strongbox
+```
+
 ### Binaries, DEB and RPM packages
 
 For the following ones, you need to know which version you want to install, to fetch the latest available :

@@ -16,14 +16,17 @@ builds:
       - arm64
 
 archives:
-  - wrap_in_directory: true
+  - format_overrides:
+      - goos: windows
+        format: zip
 
 nfpms:
   - maintainer: &author
       Maxime VISONNEAU <maxime.visonneau@gmail.com>
     description: &description
       Securely store secrets at rest using Hashicorp Vault
-    license: Apache 2.0
+    license: &license
+      Apache 2.0
     homepage: &homepage
       https://github.com/mvisonneau/strongbox
     vendor: *author
@@ -38,6 +41,14 @@ brews:
     github:
       owner: mvisonneau
       name: homebrew-tap
+
+scoop:
+  description: *description
+  homepage: *homepage
+  license: *license
+  bucket:
+    owner: mvisonneau
+    name: scoops
 
 checksum:
   name_template: checksums.txt
