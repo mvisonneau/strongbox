@@ -7,6 +7,8 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+## [0.1.8] - 2019-07-18
+
 ### Added
 
 - `homebrew` package release
@@ -140,7 +142,8 @@ and this project adheres to  [0ver](https://0ver.org).
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.7...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.8...HEAD
+[0.1.8]: https://github.com/mvisonneau/strongbox/compare/0.1.7...0.1.8
 [0.1.7]: https://github.com/mvisonneau/strongbox/compare/0.1.6...0.1.7
 [0.1.6]: https://github.com/mvisonneau/strongbox/compare/0.1.5...0.1.6
 [0.1.5]: https://github.com/mvisonneau/strongbox/compare/0.1.4...0.1.5
