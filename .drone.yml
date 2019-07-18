@@ -54,7 +54,7 @@ trigger:
 
 ---
 kind: pipeline
-name: build
+name: release
 
 steps:
   - name: fetch
@@ -62,7 +62,7 @@ steps:
     commands:
       - git fetch --tags
 
-  - name: build
+  - name: release
     image: goreleaser/goreleaser:v0.112.2
     environment:
       GITHUB_TOKEN:
@@ -83,6 +83,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: a05988b2eae0db063aa10747bec96c8dde462f1eeb95a118e8648fc90f86daab
+hmac: 832dbb4cfe989e53b8d1e2a1a369adec050c458731bc4d245824ed183592672b
 
 ...
