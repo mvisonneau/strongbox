@@ -8,6 +8,7 @@ WORKDIR /build
 
 COPY Makefile .
 RUN \
+apk add --no-cache make ;\
 make setup
 
 COPY . .

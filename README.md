@@ -351,6 +351,25 @@ If you use docker, you can easily get started using :
 
 This command will spin up a Vault container and a build one with everything required in terms of go dependencies in order to get started.
 
+## Build / Release
+
+If you want to build and/or release your own version of `strongbox`, you need the following prerequisites :
+
+- [git](https://git-scm.com/)
+- [golang](https://golang.org/)
+- [make](https://www.gnu.org/software/make/)
+- [goreleaser](https://goreleaser.com/)
+
+```bash
+~$ git clone git@github.com:mvisonneau/strongbox.git && cd strongbox
+
+# Build the binaries locally
+~$ make build
+
+# Build the binaries and release them (you will need a GITHUB_TOKEN and to reconfigure .goreleaser.yml)
+~$ make release
+```
+
 ## Contribute
 
 Contributions are more than welcome! Feel free to submit a [PR](https://github.com/mvisonneau/strongbox/pulls).
