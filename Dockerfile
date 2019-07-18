@@ -2,7 +2,7 @@
 # BUILD CONTAINER
 ##
 
-FROM golang:1.12.7 as builder
+FROM goreleaser/goreleaser:v0.112.2 as builder
 
 WORKDIR /build
 
@@ -12,7 +12,7 @@ make setup
 
 COPY . .
 RUN \
-make build-docker
+make build
 
 ##
 # RELEASE CONTAINER
@@ -23,7 +23,7 @@ FROM busybox:1.31-glibc
 WORKDIR /
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /build/strongbox /usr/local/bin/
+COPY --from=builder /build/dist/strongbox_linux_amd64/strongbox /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/strongbox"]
 CMD [""]

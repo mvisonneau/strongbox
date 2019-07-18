@@ -62,13 +62,12 @@ steps:
       - git fetch --tags
 
   - name: build
-    image: golang:1.12
+    image: goreleaser/goreleaser:v0.112.2
     environment:
       GITHUB_TOKEN:
         from_secret: GITHUB_TOKEN
     commands:
-      - make build
-      - make publish-github
+      - make release
 
 trigger:
   repo:
@@ -82,6 +81,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: d4ebde4e77c2bc835b5a76b177aebdd5d6584cd2b4176ba48cc5bc098c551e12
+hmac: 2553f9c8454d1ea3f74a387d54a1ab8300a0e760b8c9cf3ce139e15c096c62cc
 
 ...

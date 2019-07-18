@@ -1,21 +1,18 @@
 NAME          := strongbox
 VERSION       := $(shell git describe --tags --abbrev=1)
 FILES         := $(shell git ls-files '*.go')
-LDFLAGS       := -w -extldflags "-static" -X 'main.version=$(VERSION)'
 REPOSITORY    := mvisonneau/$(NAME)
-VAULT_VERSION := 1.1.2
+VAULT_VERSION := 1.1.3
 .DEFAULT_GOAL := help
 
 export GO111MODULE=on
 
 .PHONY: setup
 setup: ## Install required libraries/tools for build tasks
-	@command -v goveralls 2>&1 >/dev/null || GO111MODULE=off go get -u -v github.com/mattn/goveralls
-	@command -v gox 2>&1 >/dev/null       || GO111MODULE=off go get -u -v github.com/mitchellh/gox
-	@command -v ghr 2>&1 >/dev/null       || GO111MODULE=off go get -u -v github.com/tcnksm/ghr
-	@command -v golint 2>&1 >/dev/null    || GO111MODULE=off go get -u -v golang.org/x/lint/golint
-	@command -v cover 2>&1 >/dev/null     || GO111MODULE=off go get -u -v golang.org/x/tools/cmd/cover
-	@command -v goimports 2>&1 >/dev/null || GO111MODULE=off go get -u -v golang.org/x/tools/cmd/goimports
+	@command -v goveralls 2>&1 >/dev/null  || GO111MODULE=off go get -u -v github.com/mattn/goveralls
+	@command -v golint 2>&1 >/dev/null     || GO111MODULE=off go get -u -v golang.org/x/lint/golint
+	@command -v cover 2>&1 >/dev/null      || GO111MODULE=off go get -u -v golang.org/x/tools/cmd/cover
+	@command -v goimports 2>&1 >/dev/null  || GO111MODULE=off go get -u -v golang.org/x/tools/cmd/goimports
 
 .PHONY: fmt
 fmt: setup ## Format source code
@@ -38,19 +35,12 @@ install: ## Build and install locally the binary (dev purpose)
 	go install .
 
 .PHONY: build
-build: setup ## Build the binary
-	mkdir -p dist; rm -rf dist/*
-	CGO_ENABLED=0 gox -osarch "darwin/386 darwin/amd64 linux/386 linux/amd64 linux/arm64 windows/386 windows/amd64" -ldflags "$(LDFLAGS)" -output dist/$(NAME)_{{.OS}}_{{.Arch}}
-	strip dist/*_linux_amd64 dist/*_linux_386
+build: setup ## Build the binaries
+	goreleaser release --snapshot --skip-publish --rm-dist
 
-.PHONY: build-docker
-build-docker:
-	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" .
-	strip $(NAME)
-
-.PHONY: publish-github-release-binaries
-publish-github: setup ## Upload the binaries onto the GitHub release
-	ghr -u mvisonneau -replace $(VERSION) dist
+.PHONY: release
+release: setup ## Build & release the binaries
+	goreleaser release --rm-dist
 
 .PHONY: publish-coveralls
 publish-coveralls: setup ## Publish coverage results on coveralls
@@ -63,7 +53,7 @@ clean: ## Remove binary if it exists
 .PHONY: coverage
 coverage: ## Generates coverage report
 	rm -rf *.out
-	go test -v ./... -coverprofile=coverage.out
+	go test -race -v ./... -coverprofile=coverage.out
 
 .PHONY: dev-env
 dev-env: ## Build a local development environment using Docker
@@ -78,7 +68,7 @@ dev-env: ## Build a local development environment using Docker
 		-w /$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
-		golang:1.12 \
+		goreleaser/goreleaser:v0.112.2 \
 		/bin/bash -c 'make setup; make install; bash'
 	@docker kill vault
 	@docker rm vault -f

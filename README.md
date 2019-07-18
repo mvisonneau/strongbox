@@ -20,10 +20,7 @@ For the moment `strongbox` only supports the **version 1** of the [Vault K/V](ht
 
 ## Installation
 
-
-### Download binary
-
-Have a look onto the [latest release page](https://github.com/mvisonneau/strongbox/releases/latest) and pick your flavor. Platform we are building for can be found in the [Makefile](https://github.com/mvisonneau/strongbox/blob/master/Makefile#L39).
+Have a look onto the [latest release page](https://github.com/mvisonneau/strongbox/releases/latest) and pick your flavor. The exhaustive list of os/archs binaries we are releasing can be found in [here](https://github.com/mvisonneau/strongbox/blob/master/.goreleaser.yml#L8-16).
 
 ### Go
 
@@ -31,13 +28,41 @@ Have a look onto the [latest release page](https://github.com/mvisonneau/strongb
 ~$ go get -u github.com/mvisonneau/strongbox
 ```
 
+### Homebrew
+
+```bash
+~$ brew install mvisonneau/tap/strongbox
+```
+
 ### Docker
 
 ```bash
-~$ docker fetch mvisonneau/strongbox
+~$ docker run -it --rm mvisonneau/strongbox
 ```
 
-### Get started and try it out in less than a minute
+### Binaries, DEB and RPM packages
+
+For the following ones, you need to know which version you want to install, to fetch the latest available :
+
+```bash
+~$ export STRONGBOX_VERSION=$(curl -s "https://api.github.com/repos/mvisonneau/strongbox/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+```
+
+```bash
+# Binary (eg: freebsd/amd64)
+~$ wget https://github.com/mvisonneau/strongbox/releases/download/${STRONGBOX_VERSION}/strongbox_${STRONGBOX_VERSION}_freebsd_arm64.tar.gz
+~$ tar zxvf strongbox_${STRONGBOX_VERSION}_freebsd_amd64.tar.gz -C /usr/local/bin
+
+# DEB package (eg: linux/386)
+~$ wget https://github.com/mvisonneau/strongbox/releases/download/${STRONGBOX_VERSION}/strongbox_${STRONGBOX_VERSION}_linux_386.deb
+~$ dpkg -i strongbox_${STRONGBOX_VERSION}_linux_386.deb
+
+# RPM package (eg: linux/arm64)
+~$ wget https://github.com/mvisonneau/strongbox/releases/download/${STRONGBOX_VERSION}/strongbox_${STRONGBOX_VERSION}_linux_arm64.rpm
+~$ rpm -ivh strongbox_${STRONGBOX_VERSION}_linux_arm64.rpm
+```
+
+## TL;DR - Get started and try it out in less than a minute
 
 - Prereqs : **git**, **make** and **docker**
 

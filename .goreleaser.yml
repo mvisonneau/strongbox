@@ -1,0 +1,49 @@
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - freebsd
+      - linux
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm64
+
+archives:
+  - wrap_in_directory: true
+
+nfpms:
+  - maintainer: &author
+      Maxime VISONNEAU <maxime.visonneau@gmail.com>
+    description: &description
+      Securely store secrets at rest using Hashicorp Vault
+    license: Apache 2.0
+    homepage: &homepage
+      https://github.com/mvisonneau/strongbox
+    vendor: *author
+    formats:
+      - deb
+      - rpm
+
+brews:
+  - description: *description
+    homepage: *homepage
+    folder: Formula
+    github:
+      owner: mvisonneau
+      name: homebrew-tap
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  name_template: "{{ .Tag }}-{{ .ShortCommit }}"
+
+changelog:
+  skip: true
