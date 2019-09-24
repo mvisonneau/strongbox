@@ -3,10 +3,12 @@ package cmd
 import (
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/fatih/color"
 	"github.com/hashicorp/vault/api"
+	"github.com/mitchellh/go-homedir"
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 )
@@ -35,16 +37,9 @@ func getVaultClient(vc *VaultConfig) (*Vault, error) {
 		return nil, fmt.Errorf("Vault endpoint must be defined")
 	}
 
-	if vc.Token == "" &&
-		(vc.RoleID == "" || vc.SecretID == "") {
-		return nil, fmt.Errorf("Either vault-token or (vault-role-id and vault-secret-id) must be defined")
-	}
-
-	v.SetAddress(vc.Address)
-
-	if vc.Token != "" {
+	if len(vc.Token) > 0 {
 		v.SetToken(vc.Token)
-	} else {
+	} else if len(vc.RoleID) > 0 && len(vc.SecretID) > 0 {
 		data := map[string]interface{}{
 			"role_id":   vc.RoleID,
 			"secret_id": vc.SecretID,
@@ -62,6 +57,14 @@ func getVaultClient(vc *VaultConfig) (*Vault, error) {
 		} else {
 			v.SetToken(r.Auth.ClientToken)
 		}
+	} else {
+		home, _ := homedir.Dir()
+		f, err := ioutil.ReadFile(home + "/.vault-token")
+		if err != nil {
+			return nil, fmt.Errorf("Vault token is not defined (VAULT_TOKEN, (--vault-role-id and --vault-secret-id) or ~/.vault-token)")
+		}
+
+		v.SetToken(string(f))
 	}
 
 	return &Vault{v}, nil

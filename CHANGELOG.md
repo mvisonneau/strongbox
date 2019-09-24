@@ -7,6 +7,10 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Added support of `~/.vault-token` file for Vault authentication
+
 ### Changed
 
 - Moved **logger** definition into its own package
