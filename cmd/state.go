@@ -1,4 +1,4 @@
-package app
+package cmd
 
 import (
 	"fmt"
@@ -18,11 +18,23 @@ type State struct {
 		SecretPath string
 	}
 	Secrets map[string]map[string]string
+	Config  *StateConfig
+}
+
+// StateConfig handles state client configuration
+type StateConfig struct {
+	Path string
+}
+
+func getStateClient(sc *StateConfig) *State {
+	return &State{
+		Config: sc,
+	}
 }
 
 // Init : Generates an empty state file at the configured state file location
 func (s *State) Init() {
-	log.Infof("Creating an empty state file at %v", cfg.State.Location)
+	log.Infof("Creating an empty state file at %v", s.Config.Path)
 	s.SetVaultSecretPath("secret/")
 	s.save()
 }
@@ -51,19 +63,19 @@ func (s *State) VaultSecretPath() string {
 
 // Load : Loads the statefile content in memory
 func (s *State) Load() {
-	if cfg.State.Location == "" {
+	if s.Config.Path == "" {
 		log.Fatal("State file must be defined")
 		os.Exit(1)
 	}
 
-	log.Debugf("Loading from statefile: %v", cfg.State.Location)
-	if _, err := os.Stat(cfg.State.Location); os.IsNotExist(err) {
+	log.Debugf("Loading from statefile: %v", s.Config.Path)
+	if _, err := os.Stat(s.Config.Path); os.IsNotExist(err) {
 		log.Debug("State file not found")
-		fmt.Printf("State file not found at location: %s, use 'strongbox init' to generate an empty one.\n", cfg.State.Location)
+		fmt.Printf("State file not found at location: %s, use 'strongbox init' to generate an empty one.\n", s.Config.Path)
 		os.Exit(1)
 	}
 
-	filename, _ := filepath.Abs(cfg.State.Location)
+	filename, _ := filepath.Abs(s.Config.Path)
 	data, err := ioutil.ReadFile(filename)
 
 	if err != nil {
@@ -122,12 +134,11 @@ func (s *State) ListSecrets(secret string) {
 // WriteSecretKey : Add or Update a key value within a secret
 func (s *State) WriteSecretKey(secret, key, value string) {
 	if s.Secrets == nil {
-		log.Fatal("There was an error loading the secrets")
-		os.Exit(1)
+		s.Secrets = map[string]map[string]string{}
 	}
 
 	if s.Secrets[secret] == nil {
-		s.Secrets[secret] = make(map[string]string)
+		s.Secrets[secret] = map[string]string{}
 	}
 
 	s.Secrets[secret][key] = value
@@ -136,12 +147,7 @@ func (s *State) WriteSecretKey(secret, key, value string) {
 
 // ReadSecretKey : Read the value of a SecretKey
 func (s *State) ReadSecretKey(secret, key string) string {
-	if s.Secrets == nil {
-		log.Fatal("There was an error loading the secrets")
-		os.Exit(1)
-	}
-
-	if s.Secrets[secret] == nil {
+	if s.Secrets == nil || s.Secrets[secret] == nil {
 		fmt.Printf("No secret '%v' found\n", secret)
 		os.Exit(1)
 	}
@@ -156,12 +162,7 @@ func (s *State) ReadSecretKey(secret, key string) string {
 
 // DeleteSecret : Delete a secret from the statefile based on its name
 func (s *State) DeleteSecret(secret string) {
-	if s.Secrets == nil {
-		log.Fatal("There was an error loading the secrets")
-		os.Exit(1)
-	}
-
-	if s.Secrets[secret] == nil {
+	if s.Secrets == nil || s.Secrets[secret] == nil {
 		fmt.Printf("No secret '%v' found\n", secret)
 		os.Exit(1)
 	}
@@ -173,12 +174,7 @@ func (s *State) DeleteSecret(secret string) {
 
 // DeleteSecretKey : Delete a secret:key from the statefile based on the secret and key names
 func (s *State) DeleteSecretKey(secret, key string) {
-	if s.Secrets == nil {
-		log.Fatal("There was an error loading the secrets")
-		os.Exit(1)
-	}
-
-	if s.Secrets[secret] == nil {
+	if s.Secrets == nil || s.Secrets[secret] == nil {
 		fmt.Printf("No secret '%v' found\n", secret)
 		os.Exit(1)
 	}
@@ -224,13 +220,13 @@ func (s *State) RotateFromOldTransitKey(key string) {
 
 // save : write the statefile onto the disk
 func (s *State) save() {
-	log.Debugf("Saving state file at %v", cfg.State.Location)
+	log.Debugf("Saving state file at %v", s.Config.Path)
 	output, err := yaml.Marshal(&s)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 		os.Exit(1)
 	}
 
-	filename, _ := filepath.Abs(cfg.State.Location)
+	filename, _ := filepath.Abs(s.Config.Path)
 	ioutil.WriteFile(filename, output, 0644)
 }

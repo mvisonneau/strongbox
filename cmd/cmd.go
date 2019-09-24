@@ -1,4 +1,4 @@
-package app
+package cmd
 
 import (
 	"fmt"
@@ -11,25 +11,48 @@ import (
 	"github.com/tcnksm/go-input"
 	"github.com/urfave/cli"
 
-	"github.com/mvisonneau/strongbox/config"
 	"github.com/mvisonneau/strongbox/logger"
 	"github.com/mvisonneau/strongbox/rand"
 )
 
-var cfg config.Config
-var s State
 var start time.Time
-var v Vault
+var s *State
+var v *Vault
 
-func execute(ctx *cli.Context) error {
-	start = time.Now()
+func configure(ctx *cli.Context) error {
+	start = ctx.App.Metadata["startTime"].(time.Time)
 
 	lc := &logger.Config{
 		Level:  ctx.GlobalString("log-level"),
 		Format: ctx.GlobalString("log-format"),
 	}
 
-	if err := lc.Configure(); err != nil {
+	err := lc.Configure()
+	if err != nil {
+		return err
+	}
+
+	v, err = getVaultClient(&VaultConfig{
+		Address:  ctx.GlobalString("vault-address"),
+		Token:    ctx.GlobalString("vault-token"),
+		RoleID:   ctx.GlobalString("vault-role-id"),
+		SecretID: ctx.GlobalString("vault-secret-id"),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	s = getStateClient(&StateConfig{
+		Path: ctx.GlobalString("state"),
+	})
+
+	return nil
+}
+
+// Execute all commands
+func Execute(ctx *cli.Context) error {
+	if err := configure(ctx); err != nil {
 		return exit(cli.NewExitError(err.Error(), 1))
 	}
 
@@ -45,10 +68,8 @@ func execute(ctx *cli.Context) error {
 		s.SetVaultTransitKey(ctx.Args().First())
 	case "transit info":
 		s.Load()
-		v.ConfigureClient()
 		v.GetTransitInfo()
 	case "transit list":
-		v.ConfigureClient()
 		v.ListTransitKeys()
 	case "transit create":
 		if ctx.NArg() != 1 {
@@ -56,7 +77,6 @@ func execute(ctx *cli.Context) error {
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		v.ConfigureClient()
 		v.CreateTransitKey(ctx.Args().First())
 		s.SetVaultTransitKey(ctx.Args().First())
 	case "transit delete":
@@ -64,7 +84,6 @@ func execute(ctx *cli.Context) error {
 			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
-		v.ConfigureClient()
 		v.DeleteTransitKey(ctx.Args().First())
 	case "secret write":
 		if ctx.NArg() != 1 ||
@@ -78,7 +97,6 @@ func execute(ctx *cli.Context) error {
 		}
 
 		s.Load()
-		v.ConfigureClient()
 
 		var secret string
 		if ctx.Bool("masked_value") {
@@ -114,7 +132,6 @@ func execute(ctx *cli.Context) error {
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		v.ConfigureClient()
 		fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.Args().First(), ctx.String("key"))))
 	case "secret delete":
 		if ctx.NArg() != 1 {
@@ -141,7 +158,6 @@ func execute(ctx *cli.Context) error {
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		v.ConfigureClient()
 		s.RotateFromOldTransitKey(ctx.Args().First())
 	case "get-secret-path":
 		s.Load()
@@ -157,7 +173,6 @@ func execute(ctx *cli.Context) error {
 		s.Init()
 	case "status":
 		s.Load()
-		v.ConfigureClient()
 		s.Status()
 		v.Status()
 	case "plan":
@@ -173,7 +188,6 @@ func execute(ctx *cli.Context) error {
 
 func run(action string) error {
 	s.Load()
-	v.ConfigureClient()
 
 	// Fetch local values
 	local := make(map[string]map[string]string)

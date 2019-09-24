@@ -3,11 +3,11 @@ package main
 import (
 	"os"
 
-	"github.com/mvisonneau/strongbox/app"
+	"github.com/mvisonneau/strongbox/cli"
 )
 
-var version = "<devel>"
+var version = ""
 
 func main() {
-	app.Cli(version).Run(os.Args)
+	cli.Init(&version).Run(os.Args)
 }

@@ -1,74 +1,62 @@
-package app
+package cli
 
 import (
-	"fmt"
+	"time"
 
+	"github.com/mvisonneau/strongbox/cmd"
 	"github.com/urfave/cli"
 )
 
-func init() {
-	cli.VersionPrinter = func(c *cli.Context) {
-		fmt.Println(c.App.Version)
-	}
-}
+// Init : Generates CLI configuration for the application
+func Init(version *string) (app *cli.App) {
+	app = cli.NewApp()
+	app.Name = "strongbox"
+	app.Version = *version
+	app.Usage = "safely manage Hashicorp Vault secrets at rest"
+	app.EnableBashCompletion = true
 
-// Cli : Generates cli configuration for the application
-func Cli(version string) (c *cli.App) {
-	c = cli.NewApp()
-	c.Name = "strongbox"
-	c.Version = version
-	c.Usage = "Securely store secrets at rest with Hashicorp Vault"
-	c.EnableBashCompletion = true
-
-	c.Flags = []cli.Flag{
+	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:        "state,s",
-			EnvVar:      "STRONGBOX_STATE",
-			Usage:       "load state from `FILE`",
-			Value:       ".strongbox_state.yml",
-			Destination: &cfg.State.Location,
+			Name:   "state,s",
+			EnvVar: "STRONGBOX_STATE",
+			Usage:  "load state from `FILE`",
+			Value:  ".strongbox_state.yml",
 		},
 		cli.StringFlag{
-			Name:        "vault-addr",
-			EnvVar:      "VAULT_ADDR",
-			Usage:       "vault endpoint",
-			Destination: &cfg.Vault.Address,
+			Name:   "vault-addr",
+			EnvVar: "VAULT_ADDR",
+			Usage:  "vault endpoint",
 		},
 		cli.StringFlag{
-			Name:        "vault-token",
-			EnvVar:      "VAULT_TOKEN",
-			Usage:       "vault token",
-			Destination: &cfg.Vault.Token,
+			Name:   "vault-token",
+			EnvVar: "VAULT_TOKEN",
+			Usage:  "vault token",
 		},
 		cli.StringFlag{
-			Name:        "vault-role-id",
-			EnvVar:      "VAULT_ROLE_ID",
-			Usage:       "vault role id",
-			Destination: &cfg.Vault.RoleID,
+			Name:   "vault-role-id",
+			EnvVar: "VAULT_ROLE_ID",
+			Usage:  "vault role id",
 		},
 		cli.StringFlag{
-			Name:        "vault-secret-id",
-			EnvVar:      "VAULT_SECRET_ID",
-			Usage:       "vault secret id",
-			Destination: &cfg.Vault.SecretID,
+			Name:   "vault-secret-id",
+			EnvVar: "VAULT_SECRET_ID",
+			Usage:  "vault secret id",
 		},
 		cli.StringFlag{
-			Name:        "log-level",
-			EnvVar:      "STRONGBOX_LOG_LEVEL",
-			Usage:       "log level (debug,info,warn,fatal,panic)",
-			Value:       "info",
-			Destination: &cfg.Log.Level,
+			Name:   "log-level",
+			EnvVar: "STRONGBOX_LOG_LEVEL",
+			Usage:  "log level (debug,info,warn,fatal,panic)",
+			Value:  "info",
 		},
 		cli.StringFlag{
-			Name:        "log-format",
-			EnvVar:      "STRONGBOX_LOG_FORMAT",
-			Usage:       "log format (json,text)",
-			Value:       "text",
-			Destination: &cfg.Log.Format,
+			Name:   "log-format",
+			EnvVar: "STRONGBOX_LOG_FORMAT",
+			Usage:  "log format (json,text)",
+			Value:  "text",
 		},
 	}
 
-	c.Commands = []cli.Command{
+	app.Commands = []cli.Command{
 		{
 			Name:  "transit",
 			Usage: "perform actions on transit key/backend",
@@ -77,31 +65,31 @@ func Cli(version string) (c *cli.App) {
 					Name:      "use",
 					Usage:     "configure a transit key to use",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 				{
 					Name:      "info",
 					Usage:     "get information about the currently used transit key",
 					ArgsUsage: " ",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 				{
 					Name:      "list",
 					Usage:     "list available transit keys",
 					ArgsUsage: " ",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 				{
 					Name:      "create",
 					Usage:     "create and use a transit key",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 				{
 					Name:      "delete",
 					Usage:     "delete an existing transit key from Vault",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 			},
 		},
@@ -131,7 +119,7 @@ func Cli(version string) (c *cli.App) {
 							Usage: "automatically generates a string of this length",
 						},
 					},
-					Action: execute,
+					Action: cmd.Execute,
 				},
 				{
 					Name:      "read",
@@ -143,7 +131,7 @@ func Cli(version string) (c *cli.App) {
 							Usage: "key name",
 						},
 					},
-					Action: execute,
+					Action: cmd.Execute,
 				},
 				{
 					Name:      "delete",
@@ -155,19 +143,19 @@ func Cli(version string) (c *cli.App) {
 							Usage: "key name",
 						},
 					},
-					Action: execute,
+					Action: cmd.Execute,
 				},
 				{
 					Name:      "list",
 					Usage:     "list all managed secrets",
 					ArgsUsage: " ",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 				{
 					Name:      "rotate-from",
 					Usage:     "rotate local secrets encryption from an old transit key",
 					ArgsUsage: "<old_vault_transit_key>",
-					Action:    execute,
+					Action:    cmd.Execute,
 				},
 			},
 		},
@@ -175,38 +163,42 @@ func Cli(version string) (c *cli.App) {
 			Name:      "get-secret-path",
 			Usage:     "display the currently used vault secret path in the statefile",
 			ArgsUsage: " ",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
 		{
 			Name:      "set-secret-path",
 			Usage:     "update the vault secret path in the statefile",
 			ArgsUsage: "<secret_path>",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
 		{
 			Name:      "init",
 			Usage:     "Create a empty state file at configured location",
 			ArgsUsage: " ",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
 		{
 			Name:      "status",
 			Usage:     "display current status",
 			ArgsUsage: " ",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
 		{
 			Name:      "plan",
 			Usage:     "compare local version with vault cluster",
 			ArgsUsage: " ",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
 		{
 			Name:      "apply",
 			Usage:     "synchronize vault managed secrets",
 			ArgsUsage: " ",
-			Action:    execute,
+			Action:    cmd.Execute,
 		},
+	}
+
+	app.Metadata = map[string]interface{}{
+		"startTime": time.Now(),
 	}
 
 	return

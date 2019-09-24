@@ -1,4 +1,4 @@
-package app
+package cmd
 
 import (
 	"encoding/base64"
@@ -16,38 +16,41 @@ type Vault struct {
 	Client *api.Client
 }
 
-// ConfigureClient : Instanciate and configure a vault client
-func (v *Vault) ConfigureClient() {
+// VaultConfig handles Vault configuration
+type VaultConfig struct {
+	Address  string
+	Token    string
+	RoleID   string
+	SecretID string
+}
+
+func getVaultClient(vc *VaultConfig) (*Vault, error) {
 	log.Debug("Creating Vault client..")
-	var err error
-	v.Client, err = api.NewClient(nil)
+	v, err := api.NewClient(nil)
 	if err != nil {
-		log.Fatalf("Error creating Vault client: %v", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("Error creating Vault client: %v", err)
 	}
 
-	if cfg.Vault.Address == "" {
-		log.Fatal("Vault endpoint must be defined")
-		os.Exit(1)
+	if vc.Address == "" {
+		return nil, fmt.Errorf("Vault endpoint must be defined")
 	}
 
-	if cfg.Vault.Token == "" &&
-		(cfg.Vault.RoleID == "" || cfg.Vault.SecretID == "") {
-		log.Fatal("Either vault-token or (vault-role-id and vault-secret-id) must be defined")
-		os.Exit(1)
+	if vc.Token == "" &&
+		(vc.RoleID == "" || vc.SecretID == "") {
+		return nil, fmt.Errorf("Either vault-token or (vault-role-id and vault-secret-id) must be defined")
 	}
 
-	v.Client.SetAddress(cfg.Vault.Address)
+	v.SetAddress(vc.Address)
 
-	if cfg.Vault.Token != "" {
-		v.Client.SetToken(cfg.Vault.Token)
+	if vc.Token != "" {
+		v.SetToken(vc.Token)
 	} else {
 		data := map[string]interface{}{
-			"role_id":   cfg.Vault.RoleID,
-			"secret_id": cfg.Vault.SecretID,
+			"role_id":   vc.RoleID,
+			"secret_id": vc.SecretID,
 		}
 
-		r, err := v.Client.Logical().Write("auth/approle/login", data)
+		r, err := v.Logical().Write("auth/approle/login", data)
 		if err != nil {
 			log.Fatalf("Can't authenticate against vault using provided approle credentials: %v", err)
 			os.Exit(1)
@@ -57,9 +60,11 @@ func (v *Vault) ConfigureClient() {
 			log.Fatalf("no auth info returned with provided approle credentials")
 			os.Exit(1)
 		} else {
-			v.Client.SetToken(r.Auth.ClientToken)
+			v.SetToken(r.Auth.ClientToken)
 		}
 	}
+
+	return &Vault{v}, nil
 }
 
 // GetTransitInfo : Fetch some information from Vault about the configured TransitKey

@@ -9,7 +9,13 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ### Changed
 
-- Moved logger definition into its own package
+- Moved **logger** definition into its own package
+- Moved **cli** definition into its own package
+- Refactored client instanciations
+
+### Deleted
+
+- config package
 
 ## [0.1.8] - 2019-07-18
 
