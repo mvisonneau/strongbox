@@ -12,6 +12,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/mvisonneau/strongbox/config"
+	"github.com/mvisonneau/strongbox/logger"
 	"github.com/mvisonneau/strongbox/rand"
 )
 
@@ -20,23 +21,28 @@ var s State
 var start time.Time
 var v Vault
 
-func execute(c *cli.Context) error {
+func execute(ctx *cli.Context) error {
 	start = time.Now()
-	err := configureLogging(cfg.Log.Level, cfg.Log.Format)
-	if err != nil {
+
+	lc := &logger.Config{
+		Level:  ctx.GlobalString("log-level"),
+		Format: ctx.GlobalString("log-format"),
+	}
+
+	if err := lc.Configure(); err != nil {
 		return exit(cli.NewExitError(err.Error(), 1))
 	}
 
-	log.Debugf("Function: %v", c.Command.FullName())
+	log.Debugf("Function: %v", ctx.Command.FullName())
 
-	switch c.Command.FullName() {
+	switch ctx.Command.FullName() {
 	case "transit use":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		s.SetVaultTransitKey(c.Args().First())
+		s.SetVaultTransitKey(ctx.Args().First())
 	case "transit info":
 		s.Load()
 		v.ConfigureClient()
@@ -45,29 +51,29 @@ func execute(c *cli.Context) error {
 		v.ConfigureClient()
 		v.ListTransitKeys()
 	case "transit create":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		v.CreateTransitKey(c.Args().First())
-		s.SetVaultTransitKey(c.Args().First())
+		v.CreateTransitKey(ctx.Args().First())
+		s.SetVaultTransitKey(ctx.Args().First())
 	case "transit delete":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		v.ConfigureClient()
-		v.DeleteTransitKey(c.Args().First())
+		v.DeleteTransitKey(ctx.Args().First())
 	case "secret write":
-		if c.NArg() != 1 ||
-			c.String("key") == "" ||
-			(c.String("value") == "" && !c.Bool("masked_value") && c.Int("random") == 0) ||
-			(c.String("value") != "" && c.Bool("masked_value")) ||
-			(c.String("value") != "" && c.Int("random") != 0) ||
-			(c.Bool("masked_value") && c.Int("random") != 0) {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 ||
+			ctx.String("key") == "" ||
+			(ctx.String("value") == "" && !ctx.Bool("masked_value") && ctx.Int("random") == 0) ||
+			(ctx.String("value") != "" && ctx.Bool("masked_value")) ||
+			(ctx.String("value") != "" && ctx.Int("random") != 0) ||
+			(ctx.Bool("masked_value") && ctx.Int("random") != 0) {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 
@@ -75,7 +81,7 @@ func execute(c *cli.Context) error {
 		v.ConfigureClient()
 
 		var secret string
-		if c.Bool("masked_value") {
+		if ctx.Bool("masked_value") {
 			ui := &input.UI{
 				Writer: os.Stdout,
 				Reader: os.Stdin,
@@ -92,61 +98,61 @@ func execute(c *cli.Context) error {
 			}
 
 			secret = v.Encrypt(value)
-		} else if c.String("value") != "" {
-			secret = v.Encrypt(c.String("value"))
-		} else if c.Int("random") != 0 {
-			secret = v.Encrypt(rand.String(c.Int("random")))
+		} else if ctx.String("value") != "" {
+			secret = v.Encrypt(ctx.String("value"))
+		} else if ctx.Int("random") != 0 {
+			secret = v.Encrypt(rand.String(ctx.Int("random")))
 		} else {
-			cli.ShowSubcommandHelp(c)
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 
-		s.WriteSecretKey(c.Args().First(), c.String("key"), secret)
+		s.WriteSecretKey(ctx.Args().First(), ctx.String("key"), secret)
 	case "secret read":
-		if c.NArg() != 1 || c.String("key") == "" {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 || ctx.String("key") == "" {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		fmt.Println(v.Decrypt(s.ReadSecretKey(c.Args().First(), c.String("key"))))
+		fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.Args().First(), ctx.String("key"))))
 	case "secret delete":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		if c.String("key") == "" {
-			s.DeleteSecret(c.Args().First())
+		if ctx.String("key") == "" {
+			s.DeleteSecret(ctx.Args().First())
 		} else {
-			s.DeleteSecretKey(c.Args().First(), c.String("key"))
+			s.DeleteSecretKey(ctx.Args().First(), ctx.String("key"))
 		}
 	case "secret list":
 		s.Load()
-		switch c.NArg() {
+		switch ctx.NArg() {
 		case 1:
-			s.ListSecrets(c.Args().First())
+			s.ListSecrets(ctx.Args().First())
 		default:
 			s.ListSecrets("")
 		}
 	case "secret rotate-from":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
 		v.ConfigureClient()
-		s.RotateFromOldTransitKey(c.Args().First())
+		s.RotateFromOldTransitKey(ctx.Args().First())
 	case "get-secret-path":
 		s.Load()
 		fmt.Println(s.VaultSecretPath())
 	case "set-secret-path":
-		if c.NArg() != 1 {
-			cli.ShowSubcommandHelp(c)
+		if ctx.NArg() != 1 {
+			cli.ShowSubcommandHelp(ctx)
 			return cli.NewExitError("", 1)
 		}
 		s.Load()
-		s.SetVaultSecretPath(c.Args().First())
+		s.SetVaultSecretPath(ctx.Args().First())
 	case "init":
 		s.Init()
 	case "status":
@@ -159,7 +165,7 @@ func execute(c *cli.Context) error {
 	case "apply":
 		run("apply")
 	default:
-		log.Fatalf("Function %v not implemented yet", c.Command.FullName())
+		log.Fatalf("Function %v not implemented yet", ctx.Command.FullName())
 	}
 
 	return nil
@@ -208,7 +214,7 @@ func run(action string) error {
 
 	eq := reflect.DeepEqual(local, remote)
 	if eq {
-		color.Green("Nothing to do! Local state and remote Vault config are in sync.")
+		color.Green("Nothing to do! Local state and remote Vault config are in synctx.")
 	} else {
 		reconcile(local, remote, action)
 	}

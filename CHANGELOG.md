@@ -7,6 +7,10 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+### Changed
+
+- Moved logger definition into its own package
+
 ## [0.1.8] - 2019-07-18
 
 ### Added
