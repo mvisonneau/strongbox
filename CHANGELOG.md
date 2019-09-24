@@ -12,6 +12,7 @@ and this project adheres to  [0ver](https://0ver.org).
 - Moved **logger** definition into its own package
 - Moved **cli** definition into its own package
 - Refactored client instanciations
+- Bumped to `yaml.v3`
 
 ### Deleted
 
