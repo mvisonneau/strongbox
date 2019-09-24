@@ -13,10 +13,11 @@ and this project adheres to  [0ver](https://0ver.org).
 - Moved **cli** definition into its own package
 - Refactored client instanciations
 - Bumped to `yaml.v3`
+- Bumped to go `1.13` and goreleaser `0.118.0`
 
 ### Deleted
 
-- config package
+- Removed **config** package
 
 ## [0.1.8] - 2019-07-18
 

@@ -24,7 +24,7 @@ nfpms:
   - maintainer: &author
       Maxime VISONNEAU <maxime.visonneau@gmail.com>
     description: &description
-      Securely store secrets at rest using Hashicorp Vault
+      Safely manage Hashicorp Vault secrets at rest
     license: &license
       Apache 2.0
     homepage: &homepage
