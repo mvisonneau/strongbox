@@ -2,7 +2,7 @@
 # BUILD CONTAINER
 ##
 
-FROM goreleaser/goreleaser:v0.120.3 as builder
+FROM goreleaser/goreleaser:v0.120.4 as builder
 
 WORKDIR /build
 
