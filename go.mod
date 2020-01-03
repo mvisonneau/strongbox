@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
-	github.com/fatih/color v1.7.0
+	github.com/fatih/color v1.8.0
 	github.com/frankban/quicktest v1.5.0 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.2 // indirect
 	github.com/hashicorp/vault/api v1.0.5-0.20190909201928-35325e2c3262
