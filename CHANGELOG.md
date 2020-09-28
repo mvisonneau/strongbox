@@ -7,6 +7,8 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-09-28
+
 ### Added
 
 - **Support for KV v2**
@@ -170,7 +172,8 @@ and this project adheres to  [0ver](https://0ver.org).
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.1.8...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/mvisonneau/strongbox/compare/0.1.8...0.2.0
 [0.1.8]: https://github.com/mvisonneau/strongbox/compare/0.1.7...0.1.8
 [0.1.7]: https://github.com/mvisonneau/strongbox/compare/0.1.6...0.1.7
 [0.1.6]: https://github.com/mvisonneau/strongbox/compare/0.1.5...0.1.6

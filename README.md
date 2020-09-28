@@ -16,7 +16,7 @@ The idea is to leverage the [Vault Transit Secret backend](https://www.vaultproj
 
 ## Compatibility
 
-For the moment `strongbox` supports **both version 1 and 2** of the [Vault K/V](https://www.vaultproject.io/api/secret/kv/kv-v1.html)
+`strongbox` supports **both version 1 and 2** of the [Vault K/V](https://www.vaultproject.io/api/secret/kv/kv-v1.html)
 
 ## Installation
 
