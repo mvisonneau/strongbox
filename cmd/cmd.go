@@ -4,56 +4,19 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"time"
 
 	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"github.com/tcnksm/go-input"
-	"github.com/urfave/cli"
+	cli "github.com/urfave/cli/v2"
 
-	"github.com/mvisonneau/strongbox/logger"
 	"github.com/mvisonneau/strongbox/rand"
 )
 
-var start time.Time
-var s *State
-var v *Vault
-
-func configure(ctx *cli.Context) error {
-	start = ctx.App.Metadata["startTime"].(time.Time)
-
-	lc := &logger.Config{
-		Level:  ctx.GlobalString("log-level"),
-		Format: ctx.GlobalString("log-format"),
-	}
-
-	err := lc.Configure()
-	if err != nil {
-		return err
-	}
-
-	v, err = getVaultClient(&VaultConfig{
-		Address:  ctx.GlobalString("vault-address"),
-		Token:    ctx.GlobalString("vault-token"),
-		RoleID:   ctx.GlobalString("vault-role-id"),
-		SecretID: ctx.GlobalString("vault-secret-id"),
-	})
-
-	if err != nil {
-		return err
-	}
-
-	s = getStateClient(&StateConfig{
-		Path: ctx.GlobalString("state"),
-	})
-
-	return nil
-}
-
 // Execute all commands
-func Execute(ctx *cli.Context) error {
+func Execute(ctx *cli.Context) (int, error) {
 	if err := configure(ctx); err != nil {
-		return exit(cli.NewExitError(err.Error(), 1))
+		return 1, err
 	}
 
 	log.Debugf("Function: %v", ctx.Command.FullName())
@@ -61,8 +24,10 @@ func Execute(ctx *cli.Context) error {
 	switch ctx.Command.FullName() {
 	case "transit use":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		s.SetVaultTransitKey(ctx.Args().First())
@@ -73,16 +38,20 @@ func Execute(ctx *cli.Context) error {
 		v.ListTransitKeys()
 	case "transit create":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		v.CreateTransitKey(ctx.Args().First())
 		s.SetVaultTransitKey(ctx.Args().First())
 	case "transit delete":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		v.DeleteTransitKey(ctx.Args().First())
 	case "secret write":
@@ -92,8 +61,10 @@ func Execute(ctx *cli.Context) error {
 			(ctx.String("value") != "" && ctx.Bool("masked_value")) ||
 			(ctx.String("value") != "" && ctx.Int("random") != 0) ||
 			(ctx.Bool("masked_value") && ctx.Int("random") != 0) {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 
 		s.Load()
@@ -121,22 +92,28 @@ func Execute(ctx *cli.Context) error {
 		} else if ctx.Int("random") != 0 {
 			secret = v.Encrypt(rand.String(ctx.Int("random")))
 		} else {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 
 		s.WriteSecretKey(ctx.Args().First(), ctx.String("key"), secret)
 	case "secret read":
 		if ctx.NArg() != 1 || ctx.String("key") == "" {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.Args().First(), ctx.String("key"))))
 	case "secret delete":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		if ctx.String("key") == "" {
@@ -154,8 +131,10 @@ func Execute(ctx *cli.Context) error {
 		}
 	case "secret rotate-from":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		s.RotateFromOldTransitKey(ctx.Args().First())
@@ -164,8 +143,10 @@ func Execute(ctx *cli.Context) error {
 		fmt.Println(s.VaultSecretPath())
 	case "set-secret-path":
 		if ctx.NArg() != 1 {
-			cli.ShowSubcommandHelp(ctx)
-			return cli.NewExitError("", 1)
+			if err := cli.ShowSubcommandHelp(ctx); err != nil {
+				return 1, err
+			}
+			return 1, nil
 		}
 		s.Load()
 		s.SetVaultSecretPath(ctx.Args().First())
@@ -176,17 +157,17 @@ func Execute(ctx *cli.Context) error {
 		s.Status()
 		v.Status()
 	case "plan":
-		run("plan")
+		return run("plan")
 	case "apply":
-		run("apply")
+		return run("apply")
 	default:
 		log.Fatalf("Function %v not implemented yet", ctx.Command.FullName())
 	}
 
-	return nil
+	return 0, nil
 }
 
-func run(action string) error {
+func run(action string) (int, error) {
 	s.Load()
 
 	// Fetch local values
@@ -204,7 +185,7 @@ func run(action string) error {
 	remote := make(map[string]map[string]string)
 	d, err := v.Client.Logical().List(s.Vault.SecretPath)
 	if err != nil {
-		return exit(cli.NewExitError(err.Error(), 1))
+		return 1, err
 	}
 
 	if d != nil {
@@ -216,7 +197,7 @@ func run(action string) error {
 
 				l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
 				if err != nil {
-					return exit(cli.NewExitError(err.Error(), 1))
+					return 1, err
 				}
 
 				for m, n := range l.Data {
@@ -229,14 +210,13 @@ func run(action string) error {
 	eq := reflect.DeepEqual(local, remote)
 	if eq {
 		color.Green("Nothing to do! Local state and remote Vault config are in synctx.")
-	} else {
-		reconcile(local, remote, action)
+		return 0, nil
 	}
 
-	return nil
+	return reconcile(local, remote, action)
 }
 
-func reconcile(local map[string]map[string]string, remote map[string]map[string]string, action string) error {
+func reconcile(local map[string]map[string]string, remote map[string]map[string]string, action string) (int, error) {
 	var addSecret, deleteSecret []string
 	addSecretKey := make(map[string][]string)
 	deleteSecretKey := make(map[string][]string)
@@ -360,13 +340,8 @@ func reconcile(local map[string]map[string]string, remote map[string]map[string]
 			v.WriteSecret(k, payload)
 		}
 	default:
-		return exit(cli.NewExitError("No action specified", 1))
+		return 1, fmt.Errorf("No action specified")
 	}
 
-	return nil
-}
-
-func exit(err error) error {
-	log.Debugf("Executed in %s, exiting..", time.Since(start))
-	return err
+	return 0, nil
 }

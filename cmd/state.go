@@ -65,28 +65,22 @@ func (s *State) VaultSecretPath() string {
 func (s *State) Load() {
 	if s.Config.Path == "" {
 		log.Fatal("State file must be defined")
-		os.Exit(1)
 	}
 
 	log.Debugf("Loading from statefile: %v", s.Config.Path)
 	if _, err := os.Stat(s.Config.Path); os.IsNotExist(err) {
-		log.Debug("State file not found")
-		fmt.Printf("State file not found at location: %s, use 'strongbox init' to generate an empty one.\n", s.Config.Path)
-		os.Exit(1)
+		log.Fatalf("State file not found at location: %s, use 'strongbox init' to generate an empty one.\n", s.Config.Path)
 	}
 
 	filename, _ := filepath.Abs(s.Config.Path)
-	data, err := ioutil.ReadFile(filename)
-
+	data, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		fmt.Println("Error: State file not found, create a new one using : 'strongbox init'")
-		os.Exit(1)
+		log.Fatal("Error: State file not found, create a new one using : 'strongbox init'")
 	}
 
 	err = yaml.Unmarshal(data, &s)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
-		os.Exit(1)
 	}
 
 	log.Debugf("Loaded TransitKey: %v", s.Vault.TransitKey)
@@ -194,7 +188,6 @@ func (s *State) RotateFromOldTransitKey(key string) {
 	transitKey := s.VaultTransitKey()
 	if transitKey == key {
 		log.Fatalf("%v is already the currently configured key, can't rotate with same key", key)
-		os.Exit(1)
 	}
 
 	s.SetVaultTransitKey(key)
@@ -224,9 +217,14 @@ func (s *State) save() {
 	output, err := yaml.Marshal(&s)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
-		os.Exit(1)
 	}
 
-	filename, _ := filepath.Abs(s.Config.Path)
-	ioutil.WriteFile(filename, output, 0644)
+	filename, err := filepath.Abs(s.Config.Path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = ioutil.WriteFile(filename, output, 0600); err != nil {
+		log.Fatal(err)
+	}
 }

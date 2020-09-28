@@ -1,19 +1,17 @@
 package rand
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
+	"encoding/base64"
+	"log"
 )
-
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.?!{}[]|"
-
-var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // String : Generates a random string of a given length
 func String(length int) string {
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+	b := make([]byte, base64.RawStdEncoding.DecodedLen(length))
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Fatalf(err.Error())
 	}
-	return string(b)
+	return base64.StdEncoding.WithPadding(base64.NoPadding).EncodeToString(b)
 }

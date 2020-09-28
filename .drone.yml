@@ -4,15 +4,15 @@ name: test
 
 steps:
   - name: lint
-    image: golang:1.13
+    image: golang:1.15
     commands:
       - make lint
   - name: test
-    image: golang:1.13
+    image: golang:1.15
     commands:
       - make test
   - name: build
-    image: goreleaser/goreleaser:v0.118.0
+    image: goreleaser/goreleaser:v0.143.0
     commands:
       - apk add --no-cache make
       - make build
@@ -37,7 +37,7 @@ name: coverage
 
 steps:
   - name: coverage
-    image: golang:1.13
+    image: golang:1.15
     environment:
       COVERALLS_TOKEN:
         from_secret: COVERALLS_TOKEN
@@ -63,7 +63,7 @@ steps:
       - git fetch --tags
 
   - name: release
-    image: goreleaser/goreleaser:v0.118.0
+    image: goreleaser/goreleaser:v0.143.0
     environment:
       GITHUB_TOKEN:
         from_secret: GITHUB_TOKEN
@@ -83,6 +83,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 3673fa211927c344a0f8286e097280833a8aed2d574dd304b76591bf7fd02317
+hmac: 9e257597c790f217b6a8e360db47d6ab680e9cbb37665139a6e6bc3ddd796ab7
 
 ...

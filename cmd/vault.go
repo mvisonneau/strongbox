@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/hashicorp/vault/api"
@@ -34,7 +35,7 @@ func getVaultClient(vc *VaultConfig) (*Vault, error) {
 	}
 
 	if vc.Address == "" {
-		return nil, fmt.Errorf("Vault endpoint must be defined")
+		return nil, fmt.Errorf("Vault address must be defined")
 	}
 
 	if len(vc.Token) > 0 {
@@ -48,18 +49,16 @@ func getVaultClient(vc *VaultConfig) (*Vault, error) {
 		r, err := v.Logical().Write("auth/approle/login", data)
 		if err != nil {
 			log.Fatalf("Can't authenticate against vault using provided approle credentials: %v", err)
-			os.Exit(1)
 		}
 
 		if r.Auth == nil {
 			log.Fatalf("no auth info returned with provided approle credentials")
-			os.Exit(1)
-		} else {
-			v.SetToken(r.Auth.ClientToken)
 		}
+
+		v.SetToken(r.Auth.ClientToken)
 	} else {
 		home, _ := homedir.Dir()
-		f, err := ioutil.ReadFile(home + "/.vault-token")
+		f, err := ioutil.ReadFile(filepath.Clean(home + "/.vault-token"))
 		if err != nil {
 			return nil, fmt.Errorf("Vault token is not defined (VAULT_TOKEN, (--vault-role-id and --vault-secret-id) or ~/.vault-token)")
 		}
@@ -75,12 +74,10 @@ func (v *Vault) GetTransitInfo() {
 	d, err := v.Client.Logical().Read("transit/keys/" + s.Vault.TransitKey)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	if d == nil {
 		log.Fatalf("The configured transit key doesn't seem to exists : %v", s.Vault.TransitKey)
-		os.Exit(1)
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -96,7 +93,6 @@ func (v *Vault) CreateTransitKey(key string) {
 	_, err := v.Client.Logical().Write("transit/keys/"+key, make(map[string]interface{}))
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	fmt.Println("Transit key created successfully")
@@ -107,7 +103,6 @@ func (v *Vault) ListTransitKeys() {
 	d, err := v.Client.Logical().List("transit/keys")
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	if d != nil {
@@ -127,13 +122,11 @@ func (v *Vault) DeleteTransitKey(key string) {
 	_, err := v.Client.Logical().Write("transit/keys/"+key+"/config", p)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	_, err = v.Client.Logical().Delete("transit/keys/" + key)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 	color.Green("=> Deleted transit key '%v' from Vault", key)
 }
@@ -144,7 +137,6 @@ func (v *Vault) ListSecrets() {
 	d, err := v.Client.Logical().List(s.Vault.SecretPath)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -161,13 +153,11 @@ func (v *Vault) Status() {
 	fmt.Println("[VAULT]")
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	d, err := v.Client.Logical().List(s.Vault.SecretPath)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	secretsCount := 0
@@ -192,7 +182,6 @@ func (v *Vault) Encrypt(value string) string {
 	d, err := v.Client.Logical().Write("transit/encrypt/"+s.Vault.TransitKey, payload)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 
 	return d.Data["ciphertext"].(string)
@@ -205,7 +194,6 @@ func (v *Vault) Decrypt(value string) string {
 	d, err := v.Client.Logical().Write("transit/decrypt/"+s.Vault.TransitKey, payload)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 	output, _ := base64.StdEncoding.DecodeString(d.Data["plaintext"].(string))
 	return string(output)
@@ -216,7 +204,6 @@ func (v *Vault) WriteSecret(secret string, payload map[string]interface{}) {
 	_, err := v.Client.Logical().Write(s.Vault.SecretPath+secret, payload)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 	color.Green("=> Added/Updated secret '%v' and managed keys", secret)
 }
@@ -226,7 +213,6 @@ func (v *Vault) DeleteSecret(secret string) {
 	_, err := v.Client.Logical().Delete(s.Vault.SecretPath + secret)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
-		os.Exit(1)
 	}
 	color.Green("=> Deleted secret '%v' and its underlying keys", secret)
 }

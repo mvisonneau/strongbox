@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mvisonneau/strongbox)](https://goreportcard.com/report/github.com/mvisonneau/strongbox)
 [![Docker Pulls](https://img.shields.io/docker/pulls/mvisonneau/strongbox.svg)](https://hub.docker.com/r/mvisonneau/strongbox/)
 [![Build Status](https://cloud.drone.io/api/badges/mvisonneau/strongbox/status.svg)](https://cloud.drone.io/mvisonneau/strongbox)
-[![Coverage Status](https://coveralls.io/repos/github/mvisonneau/strongbox/badge.svg?branch=master)](https://coveralls.io/github/mvisonneau/strongbox?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/mvisonneau/strongbox/badge.svg?branch=main)](https://coveralls.io/github/mvisonneau/strongbox?branch=main)
 
 Securely store secrets at rest using [Hashicorp Vault](https://www.vaultproject.io/).
 
@@ -20,7 +20,7 @@ For the moment `strongbox` only supports the **version 1** of the [Vault K/V](ht
 
 ## Installation
 
-Have a look onto the [latest release page](https://github.com/mvisonneau/strongbox/releases/latest) and pick your flavor. The exhaustive list of os/archs binaries we are releasing can be found in [here](https://github.com/mvisonneau/strongbox/blob/master/.goreleaser.yml#L8-16).
+Have a look onto the [latest release page](https://github.com/mvisonneau/strongbox/releases/latest) and pick your flavor. The exhaustive list of os/archs binaries we are releasing can be found in [here](https://github.com/mvisonneau/strongbox/blob/main/.goreleaser.yml#L8-16).
 
 ### Go
 

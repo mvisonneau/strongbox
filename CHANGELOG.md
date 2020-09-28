@@ -10,6 +10,8 @@ and this project adheres to  [0ver](https://0ver.org).
 ### Added
 
 - Added support of `~/.vault-token` file for Vault authentication
+- Added gosec tests as part of the linting process
+- Lock process memory (if possible) before proceeding to operations with Vault API
 
 ### Changed
 
@@ -17,7 +19,13 @@ and this project adheres to  [0ver](https://0ver.org).
 - Moved **cli** definition into its own package
 - Refactored client instanciations
 - Bumped to `yaml.v3`
-- Bumped to go `1.13` and goreleaser `0.118.0`
+- Bumped to go `1.15` and goreleaser `0.143.0`
+- Refactored the rand function with crypto/rand and base4
+- Fixed newly discovered lint issues
+- Outsourced logger configuration
+- Upgraded urfave/cli to v2
+- Bumped Vault to `1.5.4`
+- Switched default branch to **main**
 
 ### Deleted
 

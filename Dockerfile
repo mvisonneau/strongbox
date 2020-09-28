@@ -13,7 +13,7 @@ make setup
 
 COPY . .
 RUN \
-make build
+make build-linux-amd64
 
 ##
 # RELEASE CONTAINER

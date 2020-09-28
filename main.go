@@ -9,5 +9,5 @@ import (
 var version = ""
 
 func main() {
-	cli.Init(&version).Run(os.Args)
+	cli.Run(version, os.Args)
 }
