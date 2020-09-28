@@ -21,14 +21,10 @@ archives:
         format: zip
 
 nfpms:
-  - maintainer: &author
-      Maxime VISONNEAU <maxime.visonneau@gmail.com>
-    description: &description
-      Safely manage Hashicorp Vault secrets at rest
-    license: &license
-      Apache 2.0
-    homepage: &homepage
-      https://github.com/mvisonneau/strongbox
+  - maintainer: &author Maxime VISONNEAU <maxime.visonneau@gmail.com>
+    description: &description Safely manage Hashicorp Vault secrets at rest
+    license: &license Apache 2.0
+    homepage: &homepage https://github.com/mvisonneau/strongbox
     vendor: *author
     formats:
       - deb
@@ -38,7 +34,7 @@ brews:
   - description: *description
     homepage: *homepage
     folder: Formula
-    github:
+    tap:
       owner: mvisonneau
       name: homebrew-tap
 
@@ -54,7 +50,7 @@ checksum:
   name_template: checksums.txt
 
 snapshot:
-  name_template: "{{ .Tag }}-{{ .ShortCommit }}"
+  name_template: '{{ .Tag }}-{{ .ShortCommit }}'
 
 changelog:
   skip: true
