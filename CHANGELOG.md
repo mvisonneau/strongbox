@@ -11,7 +11,7 @@ and this project adheres to  [0ver](https://0ver.org).
 
 - Added support of `~/.vault-token` file for Vault authentication
 - Added gosec tests as part of the linting process
-- Lock process memory (if possible) before proceeding to operations with Vault API
+- Lock process memory before proceeding to operations with Vault API
 
 ### Changed
 
@@ -26,6 +26,7 @@ and this project adheres to  [0ver](https://0ver.org).
 - Upgraded urfave/cli to v2
 - Bumped Vault to `1.5.4`
 - Switched default branch to **main**
+- Moved `get-secret-path` and `set-secret-path` functions under `secret get-path/set-path`
 
 ### Deleted
 

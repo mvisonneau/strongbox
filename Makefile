@@ -94,12 +94,12 @@ dev-env: ## Build a local development environment using Docker
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
 		vault:$(VAULT_VERSION) secrets enable transit
-	@docker run -it --rm \
+	@docker run -it --rm --cap-add IPC_LOCK \
 		-v $(shell pwd):/$(NAME) \
 		-w /$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
-		goreleaser/goreleaser:v0.143.0 \
+		golang:1.15 \
 		/bin/bash -c 'make setup; make install; bash'
 	@docker kill vault
 	@docker rm vault -f

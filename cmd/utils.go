@@ -66,6 +66,9 @@ func ExecWrapper(f func(ctx *cli.Context) (int, error)) cli.ActionFunc {
 		if err := mlock.LockMemory(); err != nil {
 			return exit(1, fmt.Errorf("error locking strongbox memory: %w", err))
 		}
+		if err := configure(ctx); err != nil {
+			return exit(1, err)
+		}
 		return exit(f(ctx))
 	}
 }

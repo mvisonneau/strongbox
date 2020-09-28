@@ -93,32 +93,29 @@ If you want to have a quick look and see how it works and/or you don't already h
 ```bash
 ~$ strongbox
 NAME:
-   strongbox - Securely store secrets at rest with Hashicorp Vault
+   strongbox - Manage Hashicorp Vault secrets at rest
 
 USAGE:
    strongbox [global options] command [command options] [arguments...]
 
 COMMANDS:
-     transit          perform actions on transit key/backend
-     secret           perform actions on secrets (locally)
-     get-secret-path  display the currently used vault secret path in the statefile
-     set-secret-path  update the vault secret path in the statefile
-     init             Create a empty state file at configured location
-     status           display current status
-     plan             compare local version with vault cluster
-     apply            synchronize vault managed secrets
-     help, h          Shows a list of commands or help for one command
+   transit  perform actions on transit key/backend
+   secret   perform actions on secrets (locally)
+   init     Create a empty state file at configured location
+   status   display current status
+   plan     compare local version with vault cluster
+   apply    synchronize vault managed secrets
+   help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --state FILE, -s FILE    load state from FILE (default: ".strongbox_state.yml") [$STRONGBOX_STATE]
-   --vault-addr value       vault endpoint [$VAULT_ADDR]
+   --vault-addr value       vault address (default: "http://vault.example.lan:8200") [$VAULT_ADDR]
    --vault-token value      vault token [$VAULT_TOKEN]
    --vault-role-id value    vault role id [$VAULT_ROLE_ID]
    --vault-secret-id value  vault secret id [$VAULT_SECRET_ID]
    --log-level value        log level (debug,info,warn,fatal,panic) (default: "info") [$STRONGBOX_LOG_LEVEL]
    --log-format value       log format (json,text) (default: "text") [$STRONGBOX_LOG_FORMAT]
-   --help, -h               show help
-   --version, -v            print the version
+   --help, -h               show help (default: false)
 ```
 
 ## Use case
@@ -174,7 +171,7 @@ The `status` command should be a bit more verbose now :
 [VAULT]
 +-----------------+--------------------------------------+
 | Sealed          | false                                |
-| Cluster Version | 0.9.1                                |
+| Cluster Version | 1.5.4                                |
 | Cluster ID      | 420572b9-af2f-e0a6-2b40-c4dd449dd29a |
 | Secrets #       |                                    0 |
 +-----------------+--------------------------------------+
@@ -212,10 +209,10 @@ The **secret_path** value is where you actually want to store the secrets onto V
 By default, it manages the root of the `secret/` mountpoint, it is advised to use a more specific location at scale as `strongbox` would by default remove the values it doesn't manage in the **secret-path**.
 
 ```bash
-~$ strongbox get-secret-path
+~$ strongbox secret get-path
 secret/
-~$ strongbox set-secret-path secret/test/
-~$ strongbox get-secret-path
+~$ strongbox secret set-path secret/test/
+~$ strongbox secret get-path
 secret/test/
 ```
 

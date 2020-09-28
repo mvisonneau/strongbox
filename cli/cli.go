@@ -24,7 +24,7 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 	app = cli.NewApp()
 	app.Name = "strongbox"
 	app.Version = version
-	app.Usage = "safely manage Hashicorp Vault secrets at rest"
+	app.Usage = "Manage Hashicorp Vault secrets at rest"
 	app.EnableBashCompletion = true
 
 	app.Flags = cli.FlagsByName{
@@ -78,31 +78,31 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 					Name:      "use",
 					Usage:     "configure a transit key to use",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.TransitUse),
 				},
 				{
 					Name:      "info",
 					Usage:     "get information about the currently used transit key",
 					ArgsUsage: " ",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.TransitInfo),
 				},
 				{
 					Name:      "list",
 					Usage:     "list available transit keys",
 					ArgsUsage: " ",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.TransitList),
 				},
 				{
 					Name:      "create",
 					Usage:     "create and use a transit key",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.TransitCreate),
 				},
 				{
 					Name:      "delete",
 					Usage:     "delete an existing transit key from Vault",
 					ArgsUsage: "<vault_transit_key_name>",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.TransitDelete),
 				},
 			},
 		},
@@ -113,100 +113,121 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 				{
 					Name:      "write",
 					Usage:     "write a secret",
-					ArgsUsage: "<secret> -k <key> [-v <value> or -r <string_length> or -V]",
+					ArgsUsage: "-s <secret> -k <key> [-v <value> or -r <string_length> or -V]",
 					Flags: cli.FlagsByName{
 						&cli.StringFlag{
-							Name:  "key,k",
-							Usage: "key name",
+							Name:    "secret",
+							Aliases: []string{"s"},
+							Usage:   "secret name",
 						},
 						&cli.StringFlag{
-							Name:  "value,v",
-							Usage: "sensitive value of the key to encrypt",
+							Name:    "key",
+							Aliases: []string{"k"},
+							Usage:   "key name",
+						},
+						&cli.StringFlag{
+							Name:    "value",
+							Aliases: []string{"v"},
+							Usage:   "sensitive value of the key to encrypt",
 						},
 						&cli.BoolFlag{
-							Name:  "masked_value,V",
-							Usage: "sensitive value of the key to encrypt (stdin)",
+							Name:    "masked_value",
+							Aliases: []string{"V"},
+							Usage:   "sensitive value of the key to encrypt (stdin)",
 						},
 						&cli.IntFlag{
-							Name:  "random,r",
-							Usage: "automatically generates a string of this length",
+							Name:    "random",
+							Aliases: []string{"r"},
+							Usage:   "automatically generates a string of this length",
 						},
 					},
-					Action: cmd.ExecWrapper(cmd.Execute),
+					Action: cmd.ExecWrapper(cmd.SecretWrite),
 				},
 				{
 					Name:      "read",
 					Usage:     "read secret value",
-					ArgsUsage: "<secret> -k <key>",
+					ArgsUsage: "-s <secret> [-k <key>]",
 					Flags: cli.FlagsByName{
 						&cli.StringFlag{
-							Name:  "key,k",
-							Usage: "key name",
+							Name:    "secret",
+							Aliases: []string{"s"},
+							Usage:   "secret name",
+						},
+						&cli.StringFlag{
+							Name:    "key",
+							Aliases: []string{"k"},
+							Usage:   "key name",
 						},
 					},
-					Action: cmd.ExecWrapper(cmd.Execute),
+					Action: cmd.ExecWrapper(cmd.SecretRead),
 				},
 				{
 					Name:      "delete",
 					Usage:     "delete secret",
-					ArgsUsage: "<secret>",
+					ArgsUsage: "-s <secret> [-k <key>]",
 					Flags: cli.FlagsByName{
 						&cli.StringFlag{
-							Name:  "key,k",
-							Usage: "key name",
+							Name:    "secret",
+							Aliases: []string{"s"},
+							Usage:   "secret name",
+						},
+						&cli.StringFlag{
+							Name:    "key",
+							Aliases: []string{"k"},
+							Usage:   "key name",
 						},
 					},
-					Action: cmd.ExecWrapper(cmd.Execute),
+					Action: cmd.ExecWrapper(cmd.SecretDelete),
 				},
 				{
 					Name:      "list",
 					Usage:     "list all managed secrets",
 					ArgsUsage: " ",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.SecretList),
 				},
 				{
 					Name:      "rotate-from",
 					Usage:     "rotate local secrets encryption from an old transit key",
 					ArgsUsage: "<old_vault_transit_key>",
-					Action:    cmd.ExecWrapper(cmd.Execute),
+					Action:    cmd.ExecWrapper(cmd.SecretRotateFrom),
+				},
+				{
+					Name:      "get-path",
+					Usage:     "display the currently used vault secret path in the statefile",
+					ArgsUsage: " ",
+					Action:    cmd.ExecWrapper(cmd.SecretGetPath),
+				},
+				{
+					Name:      "set-path",
+					Usage:     "update the vault secret path in the statefile",
+					ArgsUsage: "<secret_path>",
+					Action:    cmd.ExecWrapper(cmd.SecretSetPath),
 				},
 			},
-		},
-		{
-			Name:      "get-secret-path",
-			Usage:     "display the currently used vault secret path in the statefile",
-			ArgsUsage: " ",
-			Action:    cmd.ExecWrapper(cmd.Execute),
-		},
-		{
-			Name:      "set-secret-path",
-			Usage:     "update the vault secret path in the statefile",
-			ArgsUsage: "<secret_path>",
-			Action:    cmd.ExecWrapper(cmd.Execute),
 		},
 		{
 			Name:      "init",
 			Usage:     "Create a empty state file at configured location",
 			ArgsUsage: " ",
-			Action:    cmd.ExecWrapper(cmd.Execute),
+			Action:    cmd.ExecWrapper(cmd.Init),
 		},
 		{
 			Name:      "status",
 			Usage:     "display current status",
 			ArgsUsage: " ",
-			Action:    cmd.ExecWrapper(cmd.Execute),
+			Action:    cmd.ExecWrapper(cmd.Status),
 		},
 		{
 			Name:      "plan",
 			Usage:     "compare local version with vault cluster",
 			ArgsUsage: " ",
-			Action:    cmd.ExecWrapper(cmd.Execute),
+			Action:    cmd.ExecWrapper(cmd.Plan),
 		},
 		{
 			Name:      "apply",
 			Usage:     "synchronize vault managed secrets",
 			ArgsUsage: " ",
-			Action:    cmd.ExecWrapper(cmd.Execute),
+			Action:    cmd.ExecWrapper(cmd.Apply),
 		},
 	}
 

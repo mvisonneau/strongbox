@@ -2,169 +2,34 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 
 	"github.com/fatih/color"
-	log "github.com/sirupsen/logrus"
-	"github.com/tcnksm/go-input"
 	cli "github.com/urfave/cli/v2"
-
-	"github.com/mvisonneau/strongbox/rand"
 )
 
-// Execute all commands
-func Execute(ctx *cli.Context) (int, error) {
-	if err := configure(ctx); err != nil {
-		return 1, err
-	}
-
-	log.Debugf("Function: %v", ctx.Command.FullName())
-
-	switch ctx.Command.FullName() {
-	case "transit use":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		s.SetVaultTransitKey(ctx.Args().First())
-	case "transit info":
-		s.Load()
-		v.GetTransitInfo()
-	case "transit list":
-		v.ListTransitKeys()
-	case "transit create":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		v.CreateTransitKey(ctx.Args().First())
-		s.SetVaultTransitKey(ctx.Args().First())
-	case "transit delete":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		v.DeleteTransitKey(ctx.Args().First())
-	case "secret write":
-		if ctx.NArg() != 1 ||
-			ctx.String("key") == "" ||
-			(ctx.String("value") == "" && !ctx.Bool("masked_value") && ctx.Int("random") == 0) ||
-			(ctx.String("value") != "" && ctx.Bool("masked_value")) ||
-			(ctx.String("value") != "" && ctx.Int("random") != 0) ||
-			(ctx.Bool("masked_value") && ctx.Int("random") != 0) {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-
-		s.Load()
-
-		var secret string
-		if ctx.Bool("masked_value") {
-			ui := &input.UI{
-				Writer: os.Stdout,
-				Reader: os.Stdin,
-			}
-
-			value, err := ui.Ask("Sensitive", &input.Options{
-				Required:    true,
-				Mask:        true,
-				MaskDefault: true,
-			})
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			secret = v.Encrypt(value)
-		} else if ctx.String("value") != "" {
-			secret = v.Encrypt(ctx.String("value"))
-		} else if ctx.Int("random") != 0 {
-			secret = v.Encrypt(rand.String(ctx.Int("random")))
-		} else {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-
-		s.WriteSecretKey(ctx.Args().First(), ctx.String("key"), secret)
-	case "secret read":
-		if ctx.NArg() != 1 || ctx.String("key") == "" {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.Args().First(), ctx.String("key"))))
-	case "secret delete":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		if ctx.String("key") == "" {
-			s.DeleteSecret(ctx.Args().First())
-		} else {
-			s.DeleteSecretKey(ctx.Args().First(), ctx.String("key"))
-		}
-	case "secret list":
-		s.Load()
-		switch ctx.NArg() {
-		case 1:
-			s.ListSecrets(ctx.Args().First())
-		default:
-			s.ListSecrets("")
-		}
-	case "secret rotate-from":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		s.RotateFromOldTransitKey(ctx.Args().First())
-	case "get-secret-path":
-		s.Load()
-		fmt.Println(s.VaultSecretPath())
-	case "set-secret-path":
-		if ctx.NArg() != 1 {
-			if err := cli.ShowSubcommandHelp(ctx); err != nil {
-				return 1, err
-			}
-			return 1, nil
-		}
-		s.Load()
-		s.SetVaultSecretPath(ctx.Args().First())
-	case "init":
-		s.Init()
-	case "status":
-		s.Load()
-		s.Status()
-		v.Status()
-	case "plan":
-		return run("plan")
-	case "apply":
-		return run("apply")
-	default:
-		log.Fatalf("Function %v not implemented yet", ctx.Command.FullName())
-	}
-
+// Init ..
+func Init(ctx *cli.Context) (int, error) {
+	s.Init()
 	return 0, nil
+}
+
+// Status ..
+func Status(ctx *cli.Context) (int, error) {
+	s.Load()
+	s.Status()
+	v.Status()
+	return 0, nil
+}
+
+// Plan ..
+func Plan(ctx *cli.Context) (int, error) {
+	return run("plan")
+}
+
+// Apply ..
+func Apply(ctx *cli.Context) (int, error) {
+	return run("apply")
 }
 
 func run(action string) (int, error) {
