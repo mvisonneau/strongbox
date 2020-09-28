@@ -12,14 +12,14 @@ import (
 
 // SecretRead ..
 func SecretRead(ctx *cli.Context) (int, error) {
-	if ctx.NArg() != 1 || ctx.String("key") == "" {
+	if ctx.String("secret") == "" || ctx.String("key") == "" {
 		if err := cli.ShowSubcommandHelp(ctx); err != nil {
 			return 1, err
 		}
 		return 1, nil
 	}
 	s.Load()
-	fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.Args().First(), ctx.String("key"))))
+	fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.String("secret"), ctx.String("key"))))
 
 	return 0, nil
 }
