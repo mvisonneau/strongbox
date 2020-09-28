@@ -48,7 +48,12 @@ func run(action string) (int, error) {
 
 	// Fetch remote values
 	remote := make(map[string]map[string]string)
-	d, err := v.Client.Logical().List(s.Vault.SecretPath)
+	listPath := s.VaultKVPath()
+	if s.VaultKVVersion() == 2 {
+		listPath = s.VaultKVPath() + "metadata"
+	}
+
+	d, err := v.Client.Logical().List(listPath)
 	if err != nil {
 		return 1, err
 	}
@@ -60,13 +65,28 @@ func run(action string) (int, error) {
 					remote[k.(string)] = make(map[string]string)
 				}
 
-				l, err := v.Client.Logical().Read(s.Vault.SecretPath + k.(string))
+				readPath := s.VaultKVPath() + k.(string)
+				if s.VaultKVVersion() == 2 {
+					readPath = s.VaultKVPath() + "data/" + k.(string)
+				}
+
+				l, err := v.Client.Logical().Read(readPath)
 				if err != nil {
 					return 1, err
 				}
 
-				for m, n := range l.Data {
-					remote[k.(string)][m] = n.(string)
+				if s.VaultKVVersion() == 2 {
+					if _, ok := l.Data["data"]; !ok {
+						return 1, fmt.Errorf("unable to parse content from Vault API response")
+					}
+
+					for m, n := range l.Data["data"].(map[string]interface{}) {
+						remote[k.(string)][m] = n.(string)
+					}
+				} else {
+					for m, n := range l.Data {
+						remote[k.(string)][m] = n.(string)
+					}
 				}
 			}
 		}

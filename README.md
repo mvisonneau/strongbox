@@ -16,7 +16,7 @@ The idea is to leverage the [Vault Transit Secret backend](https://www.vaultproj
 
 ## Compatibility
 
-For the moment `strongbox` only supports the **version 1** of the [Vault K/V](https://www.vaultproject.io/api/secret/kv/kv-v1.html)
+For the moment `strongbox` supports **both version 1 and 2** of the [Vault K/V](https://www.vaultproject.io/api/secret/kv/kv-v1.html)
 
 ## Installation
 
@@ -162,18 +162,19 @@ Creating an empty state file at /tmp/state.yml
 The `status` command should be a bit more verbose now :
 
 ```bash
-[STATE]
-+------------+---------+
-| TransitKey |         |
-| SecretPath | secret/ |
-| Secrets #  |       0 |
-+------------+---------+
+[STRONGBOX STATE]
++-------------+---------+
+| Transit Key | default |
+| KV Path     | secret/ |
+| KV Version  |       2 |
+| Secrets #   |       3 |
++-------------+---------+
 [VAULT]
 +-----------------+--------------------------------------+
 | Sealed          | false                                |
 | Cluster Version | 1.5.4                                |
-| Cluster ID      | 420572b9-af2f-e0a6-2b40-c4dd449dd29a |
-| Secrets #       |                                    0 |
+| Cluster ID      | 5198332c-893c-ebbd-fdcf-82d3cdb47e4a |
+| Secrets #       |                                    3 |
 +-----------------+--------------------------------------+
 ```
 
@@ -202,18 +203,28 @@ Otherwise, `strongbox` can generate and use a new one for you:
 Transit key created successfully
 ```
 
-#### Secret Path
+#### KV Path & Version
 
-The **secret_path** value is where you actually want to store the secrets onto Vault. This is only required when you're planning on keeping your locally configuration in sync with Vault. If you only want to leverage the Transit encryption capabilities you can skip this part.
+The **KV path** value is where you actually want to store the secrets onto Vault. This is only required when you're planning on keeping your locally configuration in sync with Vault. If you only want to leverage the Transit encryption capabilities you can skip this part.
 
-By default, it manages the root of the `secret/` mountpoint, it is advised to use a more specific location at scale as `strongbox` would by default remove the values it doesn't manage in the **secret-path**.
+By default, it manages the root of the `secret/` mountpoint, it is advised to use a more specific location at scale as `strongbox` would by default remove the values it doesn't manage in the **KV path**.
 
 ```bash
-~$ strongbox secret get-path
+~$ strongbox kv get-path
 secret/
-~$ strongbox secret set-path secret/test/
-~$ strongbox secret get-path
+~$ strongbox kv set-path secret/test/
+~$ strongbox kv get-path
 secret/test/
+```
+
+It is also paramount to set the correct version your KV is configured with. Default will be `2`
+
+```bash
+~$ strongbox kv get-version
+2
+~$ strongbox kv set-version 1
+~$ strongbox kv get-version
+1
 ```
 
 #### Manage Secrets (the whole point!)
@@ -239,18 +250,18 @@ You can now list all your secrets to see what they look like:
 ```bash
 ~$ strongbox secret list
 [bar]
-+-----+---------------------------------------------------------------+
-| key | vault:v1:zlU7fluN7E1/6qrjGG620KGhzE36SWyBeaNOU151eS9rkNfN1w== |
-+-----+---------------------------------------------------------------+
++-----+-------------------------------------------------------------+
+| key | {{s5:zlU7fluN7E1/6qrjGG620KGhzE36SWyBeaNOU151eS9rkNfN1w==}} |
++-----+-------------------------------------------------------------+
 [foo]
-+------+---------------------------------------------------------------+
-| key  | vault:v1:zl2idnXPPwzD/zI2GSc+wVbxCjit5jI6W+f/ps/8hpNsaJf06g== |
-| key2 | vault:v1:Gil6RwgToO7ID/Xgewfvzu1Q/dnVH85mKu5XAEvIhUZGW1X+lzM= |
-| key3 | vault:v1:ISeYexNfD0gFXF2qoEoQfSqzZUlH5DvQ/DO86YfRNhW8D24uw0Q= |
-+------+---------------------------------------------------------------+
++------+-------------------------------------------------------------+
+| key  | {{s5:zl2idnXPPwzD/zI2GSc+wVbxCjit5jI6W+f/ps/8hpNsaJf06g==}} |
+| key2 | {{s5:Gil6RwgToO7ID/Xgewfvzu1Q/dnVH85mKu5XAEvIhUZGW1X+lzM=}} |
+| key3 | {{s5:ISeYexNfD0gFXF2qoEoQfSqzZUlH5DvQ/DO86YfRNhW8D24uw0Q=}} |
++------+-------------------------------------------------------------+
 ```
 
-If you want you can also take a look at what your state file looks like :
+If you want you can also take a look at what your state file looks like:
 
 ```bash
 ~$ cat /tmp/state.yml
@@ -259,11 +270,11 @@ vault:
   secretpath: secret/test/
 secrets:
   bar:
-    key: vault:v1:zlU7fluN7E1/6qrjGG620KGhzE36SWyBeaNOU151eS9rkNfN1w==
+    key: {{s5:zlU7fluN7E1/6qrjGG620KGhzE36SWyBeaNOU151eS9rkNfN1w==}}
   foo:
-    key: vault:v1:zl2idnXPPwzD/zI2GSc+wVbxCjit5jI6W+f/ps/8hpNsaJf06g==
-    key2: vault:v1:Gil6RwgToO7ID/Xgewfvzu1Q/dnVH85mKu5XAEvIhUZGW1X+lzM=
-    key3: vault:v1:ISeYexNfD0gFXF2qoEoQfSqzZUlH5DvQ/DO86YfRNhW8D24uw0Q=
+    key: {{s5:zl2idnXPPwzD/zI2GSc+wVbxCjit5jI6W+f/ps/8hpNsaJf06g==}}
+    key2: {{s5:Gil6RwgToO7ID/Xgewfvzu1Q/dnVH85mKu5XAEvIhUZGW1X+lzM=}}
+    key3: {{s5:ISeYexNfD0gFXF2qoEoQfSqzZUlH5DvQ/DO86YfRNhW8D24uw0Q=}}
 ```
 
 A choice has been made to keep the secrets and keys readable in order to be able to review changes in PR/MRs. As you can see otherwise, you now have a perfectly shareable/commitable.

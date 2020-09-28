@@ -135,8 +135,8 @@ func (v *Vault) DeleteTransitKey(key string) {
 
 // ListSecrets : Do what it says
 func (v *Vault) ListSecrets() {
-	log.Debugf("Listing secrets in Vault SecretPath: %v", s.Vault.SecretPath)
-	d, err := v.Client.Logical().List(s.Vault.SecretPath)
+	log.Debugf("Listing secrets in Vault KV Path: %v", s.VaultKVPath())
+	d, err := v.Client.Logical().List(s.VaultKVPath())
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
 	}
@@ -157,9 +157,14 @@ func (v *Vault) Status() {
 		log.Fatalf("Vault error: %v", err)
 	}
 
-	d, err := v.Client.Logical().List(s.Vault.SecretPath)
+	listPath := s.VaultKVPath()
+	if s.VaultKVVersion() == 2 {
+		listPath = s.VaultKVPath() + "metadata"
+	}
+
+	d, err := v.Client.Logical().List(listPath)
 	if err != nil {
-		log.Fatalf("Vault error: %v", err)
+		log.Fatalf("vault error: %v", err)
 	}
 
 	secretsCount := 0
@@ -217,8 +222,18 @@ func (v *Vault) Decipher(value string) string {
 }
 
 // WriteSecret : Write a secret into Vault
-func (v *Vault) WriteSecret(secret string, payload map[string]interface{}) {
-	_, err := v.Client.Logical().Write(s.Vault.SecretPath+secret, payload)
+func (v *Vault) WriteSecret(secret string, data map[string]interface{}) {
+	queryPath := s.VaultKVPath() + secret
+	var payload map[string]interface{}
+	if s.Vault.KV.Version == 2 {
+		queryPath = s.VaultKVPath() + "data/" + secret
+		payload = make(map[string]interface{})
+		payload["data"] = data
+	} else {
+		payload = data
+	}
+
+	_, err := v.Client.Logical().Write(queryPath, payload)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
 	}
@@ -227,7 +242,7 @@ func (v *Vault) WriteSecret(secret string, payload map[string]interface{}) {
 
 // DeleteSecret : DeleteSecret a secret from Vault
 func (v *Vault) DeleteSecret(secret string) {
-	_, err := v.Client.Logical().Delete(s.Vault.SecretPath + secret)
+	_, err := v.Client.Logical().Delete(s.VaultKVPath() + secret)
 	if err != nil {
 		log.Fatalf("Vault error: %v", err)
 	}
@@ -236,6 +251,6 @@ func (v *Vault) DeleteSecret(secret string) {
 
 // DeleteSecretKey : Delete a key of a secret from Vault
 func (v *Vault) DeleteSecretKey(secret, key string) {
-	//TODO: Implement
-	color.Green("=> Deleted secret:key %v:%v", secret, key)
+	// TODO: Implement!
+	color.Yellow("=> [NOT IMPLEMENTED] - Deleted secret:key %v:%v", secret, key)
 }

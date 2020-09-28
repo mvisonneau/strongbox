@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
@@ -15,7 +17,10 @@ import (
 type State struct {
 	Vault struct {
 		TransitKey string
-		SecretPath string
+		KV         struct {
+			Path    string
+			Version int
+		}
 	}
 	Secrets map[string]map[string]string
 	Config  *StateConfig `yaml:"-"`
@@ -36,7 +41,8 @@ func getStateClient(sc *StateConfig) *State {
 func (s *State) Init() {
 	log.Infof("Creating an empty state file at %v", s.Config.Path)
 	s.SetVaultTransitKey("default")
-	s.SetVaultSecretPath("secret/")
+	s.SetVaultKVPath("secret/")
+	s.SetVaultKVVersion(2)
 	s.save()
 }
 
@@ -51,15 +57,32 @@ func (s *State) VaultTransitKey() string {
 	return s.Vault.TransitKey
 }
 
-// SetVaultSecretPath : Update state file with a Vault/SecretPath value
-func (s *State) SetVaultSecretPath(value string) {
-	s.Vault.SecretPath = value
+// SetVaultKVPath : Update state file with a Vault/Secret/Path value
+func (s *State) SetVaultKVPath(value string) {
+	s.Vault.KV.Path = value
 	s.save()
 }
 
-// VaultSecretPath : Returns the value of the configured Vault/SecretPath
-func (s *State) VaultSecretPath() string {
-	return s.Vault.SecretPath
+// VaultKVPath : Returns the value of the configured Vault/Secret/Path
+func (s *State) VaultKVPath() string {
+	if s.Vault.KV.Path == "" {
+		return "secret/"
+	}
+	return s.Vault.KV.Path
+}
+
+// SetVaultKVVersion : Update state file with a Vault/Secret/Version value
+func (s *State) SetVaultKVVersion(version int) {
+	s.Vault.KV.Version = version
+	s.save()
+}
+
+// VaultKVVersion : Returns the value of the configured Vault/Secret/Version
+func (s *State) VaultKVVersion() int {
+	if s.Vault.KV.Version == 0 {
+		return 1
+	}
+	return s.Vault.KV.Version
 }
 
 // Load : Loads the statefile content in memory
@@ -84,17 +107,19 @@ func (s *State) Load() {
 		log.Fatalf("Error: %v", err)
 	}
 
-	log.Debugf("Loaded TransitKey: %v", s.Vault.TransitKey)
-	log.Debugf("Loaded SecretPath: %v", s.Vault.SecretPath)
+	log.Debugf("Loaded Transit Key: %v", s.VaultTransitKey())
+	log.Debugf("Loaded KV Path: %v", s.VaultKVPath())
+	log.Debugf("Loaded KV Version: %v", s.VaultKVVersion())
 	log.Debugf("Loaded Secrets: %#v", s.Secrets)
 }
 
 // Status : Returns information about statefile content
 func (s *State) Status() {
-	fmt.Println("[STATE]")
+	fmt.Println("[STRONGBOX STATE]")
 	table := tablewriter.NewWriter(os.Stdout)
-	table.Append([]string{"TransitKey", s.Vault.TransitKey})
-	table.Append([]string{"SecretPath", s.Vault.SecretPath})
+	table.Append([]string{"Transit Key", s.VaultTransitKey()})
+	table.Append([]string{"KV Path", s.VaultKVPath()})
+	table.Append([]string{"KV Version", strconv.Itoa(s.VaultKVVersion())})
 	table.Append([]string{"Secrets #", fmt.Sprintf("%v", len(s.Secrets))})
 	table.Render()
 }
@@ -215,8 +240,10 @@ func (s *State) RotateFromOldTransitKey(key string) {
 // save : write the statefile onto the disk
 func (s *State) save() {
 	log.Debugf("Saving state file at %v", s.Config.Path)
-	output, err := yaml.Marshal(&s)
-	if err != nil {
+	var output bytes.Buffer
+	y := yaml.NewEncoder(&output)
+	y.SetIndent(2)
+	if err := y.Encode(&s); err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 
@@ -225,7 +252,7 @@ func (s *State) save() {
 		log.Fatal(err)
 	}
 
-	if err = ioutil.WriteFile(filename, output, 0600); err != nil {
+	if err = ioutil.WriteFile(filename, output.Bytes(), 0600); err != nil {
 		log.Fatal(err)
 	}
 }

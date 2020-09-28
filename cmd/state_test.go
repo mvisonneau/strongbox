@@ -16,8 +16,8 @@ func TestStateInit(t *testing.T) {
 	s := getTestStateClient()
 	s.Init()
 
-	if s.VaultSecretPath() != "secret/" {
-		t.Fatalf("Expected s.VaultSecretPath() to return secret/, got '%v'", s.VaultSecretPath())
+	if s.VaultKVPath() != "secret/" {
+		t.Fatalf("Expected s.VaultKVPath() to return secret/, got '%v'", s.VaultKVPath())
 	}
 }
 
@@ -39,35 +39,35 @@ func TestStateVaultTransitKey(t *testing.T) {
 	}
 }
 
-func TestStateSetVaultSecretPath(t *testing.T) {
+func TestStateSetVaultKVPath(t *testing.T) {
 	s := getTestStateClient()
-	s.SetVaultSecretPath("secret/foo/")
+	s.SetVaultKVPath("secret/foo/")
 	s.Load()
 
-	if s.VaultSecretPath() != "secret/foo/" {
-		t.Fatalf("Expected s.SetVaultSecretPath('secret/foo/') to set s.Vault.SecretPath to secret/foo/, got '%v'", s.VaultSecretPath())
+	if s.VaultKVPath() != "secret/foo/" {
+		t.Fatalf("Expected s.SetVaultKVPath('secret/foo/') to set s.VaultKVPath() to secret/foo/, got '%v'", s.VaultKVPath())
 	}
 }
 
-func TestStateVaultSecretPath(t *testing.T) {
+func TestStateVaultKVPath(t *testing.T) {
 	s := getTestStateClient()
-	s.Vault.SecretPath = "secret/foo/"
-	if s.VaultSecretPath() != "secret/foo/" {
-		t.Fatalf("Expected s.VaultSecretPath() to return secret/foo/, got '%v'", s.VaultSecretPath())
+	s.Vault.KV.Path = "secret/foo/"
+	if s.VaultKVPath() != "secret/foo/" {
+		t.Fatalf("Expected s.VaultKVPath() to return secret/foo/, got '%v'", s.VaultKVPath())
 	}
 }
 
 func TestStateLoad(t *testing.T) {
 	s := getTestStateClient()
 	s.SetVaultTransitKey("foo")
-	s.SetVaultSecretPath("secret/foo/")
+	s.SetVaultKVPath("secret/foo/")
 
 	if s.VaultTransitKey() != "foo" {
 		t.Fatalf("Expected s.VaultTransitKey() to return foo, got '%v'", s.VaultTransitKey())
 	}
 
-	if s.VaultSecretPath() != "secret/foo/" {
-		t.Fatalf("Expected s.VaultSecretPath() to return secret/foo/, got '%v'", s.VaultSecretPath())
+	if s.VaultKVPath() != "secret/foo/" {
+		t.Fatalf("Expected s.VaultKVPath() to return secret/foo/, got '%v'", s.VaultKVPath())
 	}
 }
 

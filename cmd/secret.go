@@ -119,25 +119,3 @@ func SecretRotateFrom(ctx *cli.Context) (int, error) {
 
 	return 0, nil
 }
-
-// SecretGetPath ..
-func SecretGetPath(_ *cli.Context) (int, error) {
-	s.Load()
-	fmt.Println(s.VaultSecretPath())
-
-	return 0, nil
-}
-
-// SecretSetPath ..
-func SecretSetPath(ctx *cli.Context) (int, error) {
-	if ctx.NArg() != 1 {
-		if err := cli.ShowSubcommandHelp(ctx); err != nil {
-			return 1, err
-		}
-		return 1, nil
-	}
-	s.Load()
-	s.SetVaultSecretPath(ctx.Args().First())
-
-	return 0, nil
-}

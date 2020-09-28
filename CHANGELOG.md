@@ -9,8 +9,9 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ### Added
 
-- Added support of `~/.vault-token` file for Vault authentication
-- Added gosec tests as part of the linting process
+- **Support for KV v2**
+- Support of `~/.vault-token` file for Vault authentication
+- gosec tests as part of the linting process
 - Lock process memory before proceeding to operations with Vault API
 
 ### Changed
