@@ -121,7 +121,7 @@ func SecretRotateFrom(ctx *cli.Context) (int, error) {
 }
 
 // SecretGetPath ..
-func SecretGetPath(ctx *cli.Context) (int, error) {
+func SecretGetPath(_ *cli.Context) (int, error) {
 	s.Load()
 	fmt.Println(s.VaultSecretPath())
 

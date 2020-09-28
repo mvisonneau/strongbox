@@ -9,13 +9,13 @@ import (
 )
 
 // Init ..
-func Init(ctx *cli.Context) (int, error) {
+func Init(_ *cli.Context) (int, error) {
 	s.Init()
 	return 0, nil
 }
 
 // Status ..
-func Status(ctx *cli.Context) (int, error) {
+func Status(_ *cli.Context) (int, error) {
 	s.Load()
 	s.Status()
 	v.Status()
@@ -23,12 +23,12 @@ func Status(ctx *cli.Context) (int, error) {
 }
 
 // Plan ..
-func Plan(ctx *cli.Context) (int, error) {
+func Plan(_ *cli.Context) (int, error) {
 	return run("plan")
 }
 
 // Apply ..
-func Apply(ctx *cli.Context) (int, error) {
+func Apply(_ *cli.Context) (int, error) {
 	return run("apply")
 }
 

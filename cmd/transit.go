@@ -17,7 +17,7 @@ func TransitUse(ctx *cli.Context) (int, error) {
 }
 
 // TransitInfo ..
-func TransitInfo(ctx *cli.Context) (int, error) {
+func TransitInfo(_ *cli.Context) (int, error) {
 	s.Load()
 	v.GetTransitInfo()
 
@@ -25,7 +25,7 @@ func TransitInfo(ctx *cli.Context) (int, error) {
 }
 
 // TransitList ..
-func TransitList(ctx *cli.Context) (int, error) {
+func TransitList(_ *cli.Context) (int, error) {
 	v.ListTransitKeys()
 
 	return 0, nil
