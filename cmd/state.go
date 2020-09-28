@@ -18,7 +18,7 @@ type State struct {
 		SecretPath string
 	}
 	Secrets map[string]map[string]string
-	Config  *StateConfig
+	Config  *StateConfig `yaml:"-"`
 }
 
 // StateConfig handles state client configuration
