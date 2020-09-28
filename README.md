@@ -86,6 +86,16 @@ If you want to have a quick look and see how it works and/or you don't already h
 ~$ strongbox transit create test
 ~$ strongbox secret write mysecret -k mykey -v sensitive_value
 ~$ strongbox status
+
+# You can input longer strings using the '-' keyword for stdin input
+~$ strongbox secret write mysecret -k verylong -v - <<EOF
+THIS
+IS
+A
+VERY
+LONG
+STRING
+EOF
 ```
 
 ## Usage

@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/mvisonneau/strongbox/rand"
-	log "github.com/sirupsen/logrus"
 	"github.com/tcnksm/go-input"
 	cli "github.com/urfave/cli/v2"
 )
@@ -54,10 +54,16 @@ func SecretWrite(ctx *cli.Context) (int, error) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			return 1, err
 		}
 
 		secret = v.Cipher(value)
+	} else if ctx.String("value") == "-" {
+		read, err := ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			return 1, err
+		}
+		secret = v.Cipher(string(read))
 	} else if ctx.String("value") != "" {
 		secret = v.Cipher(ctx.String("value"))
 	} else if ctx.Int("random") != 0 {

@@ -7,6 +7,10 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Support for stdin input when ciphering
+
 ## [0.2.0] - 2020-09-28
 
 ### Added
