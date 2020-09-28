@@ -19,7 +19,7 @@ func SecretRead(ctx *cli.Context) (int, error) {
 		return 1, nil
 	}
 	s.Load()
-	fmt.Println(v.Decrypt(s.ReadSecretKey(ctx.String("secret"), ctx.String("key"))))
+	fmt.Println(v.Decipher(s.ReadSecretKey(ctx.String("secret"), ctx.String("key"))))
 
 	return 0, nil
 }
@@ -57,11 +57,11 @@ func SecretWrite(ctx *cli.Context) (int, error) {
 			log.Fatal(err)
 		}
 
-		secret = v.Encrypt(value)
+		secret = v.Cipher(value)
 	} else if ctx.String("value") != "" {
-		secret = v.Encrypt(ctx.String("value"))
+		secret = v.Cipher(ctx.String("value"))
 	} else if ctx.Int("random") != 0 {
-		secret = v.Encrypt(rand.String(ctx.Int("random")))
+		secret = v.Cipher(rand.String(ctx.Int("random")))
 	} else {
 		if err := cli.ShowSubcommandHelp(ctx); err != nil {
 			return 1, err

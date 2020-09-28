@@ -128,12 +128,12 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 						&cli.StringFlag{
 							Name:    "value",
 							Aliases: []string{"v"},
-							Usage:   "sensitive value of the key to encrypt",
+							Usage:   "sensitive value of the key to cipher",
 						},
 						&cli.BoolFlag{
 							Name:    "masked_value",
 							Aliases: []string{"V"},
-							Usage:   "sensitive value of the key to encrypt (stdin)",
+							Usage:   "sensitive value of the key to cipher (stdin)",
 						},
 						&cli.IntFlag{
 							Name:    "random",

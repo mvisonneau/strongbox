@@ -35,6 +35,7 @@ func getStateClient(sc *StateConfig) *State {
 // Init : Generates an empty state file at the configured state file location
 func (s *State) Init() {
 	log.Infof("Creating an empty state file at %v", s.Config.Path)
+	s.SetVaultTransitKey("default")
 	s.SetVaultSecretPath("secret/")
 	s.save()
 }
@@ -183,7 +184,7 @@ func (s *State) DeleteSecretKey(secret, key string) {
 	fmt.Println("Key deleted!")
 }
 
-// RotateFromOldTransitKey : Replace local encrypted values with new transit key
+// RotateFromOldTransitKey : Replace locally ciphered values with new transit key
 func (s *State) RotateFromOldTransitKey(key string) {
 	transitKey := s.VaultTransitKey()
 	if transitKey == key {
@@ -197,7 +198,7 @@ func (s *State) RotateFromOldTransitKey(key string) {
 			secrets[k] = make(map[string]string)
 		}
 		for m, n := range l {
-			secrets[k][m] = v.Decrypt(n)
+			secrets[k][m] = v.Decipher(n)
 		}
 	}
 
@@ -205,7 +206,7 @@ func (s *State) RotateFromOldTransitKey(key string) {
 
 	for k, l := range secrets {
 		for m, n := range l {
-			s.WriteSecretKey(k, m, v.Encrypt(n))
+			s.WriteSecretKey(k, m, v.Cipher(n))
 		}
 	}
 	fmt.Printf("Rotated secrets from '%v' to '%v'\n", key, transitKey)

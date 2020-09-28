@@ -8,6 +8,7 @@ require (
 	github.com/hashicorp/vault/sdk v0.1.14-0.20190909201848-e0fbf9b652e2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mvisonneau/go-helpers v0.0.0-20200224131125-cb5cc4e6def9
+	github.com/mvisonneau/s5 v0.0.0-20200911102212-e0293447f0a8
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,6 +11,9 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
+
+	s5 "github.com/mvisonneau/s5/cipher"
+	s5Vault "github.com/mvisonneau/s5/cipher/vault"
 )
 
 // Vault : Handles a Vault API Client
@@ -175,28 +177,43 @@ func (v *Vault) Status() {
 	table.Render()
 }
 
-// Encrypt : Encrypt a value using the TransitKey
-func (v *Vault) Encrypt(value string) string {
-	payload := make(map[string]interface{})
-	payload["plaintext"] = base64.StdEncoding.EncodeToString([]byte(value))
-	d, err := v.Client.Logical().Write("transit/encrypt/"+s.Vault.TransitKey, payload)
-	if err != nil {
-		log.Fatalf("Vault error: %v", err)
+// Cipher : Cipher a value using the TransitKey
+func (v *Vault) Cipher(value string) string {
+	s5Engine := s5Vault.Client{
+		Client: v.Client,
+		Config: &s5Vault.Config{
+			Key: s.Vault.TransitKey,
+		},
 	}
 
-	return d.Data["ciphertext"].(string)
+	cipheredValue, err := s5Engine.Cipher(value)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return s5.GenerateOutput(cipheredValue)
 }
 
-// Decrypt : Decrypt a value using the TransitKey
-func (v *Vault) Decrypt(value string) string {
-	payload := make(map[string]interface{})
-	payload["ciphertext"] = value
-	d, err := v.Client.Logical().Write("transit/decrypt/"+s.Vault.TransitKey, payload)
-	if err != nil {
-		log.Fatalf("Vault error: %v", err)
+// Decipher : Decipher a value using the TransitKey
+func (v *Vault) Decipher(value string) string {
+	s5Engine := s5Vault.Client{
+		Client: v.Client,
+		Config: &s5Vault.Config{
+			Key: s.Vault.TransitKey,
+		},
 	}
-	output, _ := base64.StdEncoding.DecodeString(d.Data["plaintext"].(string))
-	return string(output)
+
+	parsedInput, err := s5.ParseInput(value)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	decipheredValue, err := s5Engine.Decipher(parsedInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return decipheredValue
 }
 
 // WriteSecret : Write a secret into Vault

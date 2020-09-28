@@ -42,7 +42,7 @@ func run(action string) (int, error) {
 			local[k] = make(map[string]string)
 		}
 		for m, n := range l {
-			local[k][m] = v.Decrypt(n)
+			local[k][m] = v.Decipher(n)
 		}
 	}
 

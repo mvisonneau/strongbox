@@ -28,6 +28,7 @@ and this project adheres to  [0ver](https://0ver.org).
 - Switched default branch to **main**
 - Moved `get-secret-path` and `set-secret-path` functions under `secret get-path/set-path`
 - Removed redundant config path data in statefile
+- Use s5 + Vault engine as ciphering/deciphering mechanism for the local state
 
 ### Deleted
 
