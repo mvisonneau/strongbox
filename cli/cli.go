@@ -36,9 +36,9 @@ func NewApp(version string, start time.Time) (app *cli.App) {
 			Value:   ".strongbox_state.yml",
 		},
 		&cli.StringFlag{
-			Name:    "vault-address",
+			Name:    "vault-addr",
 			EnvVars: []string{"VAULT_ADDR"},
-			Usage:   "vault endpoint",
+			Usage:   "vault address",
 		},
 		&cli.StringFlag{
 			Name:    "vault-token",

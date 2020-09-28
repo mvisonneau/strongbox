@@ -28,7 +28,7 @@ func configure(ctx *cli.Context) error {
 	}
 
 	v, err = getVaultClient(&VaultConfig{
-		Address:  ctx.String("vault-address"),
+		Address:  ctx.String("vault-addr"),
 		Token:    ctx.String("vault-token"),
 		RoleID:   ctx.String("vault-role-id"),
 		SecretID: ctx.String("vault-secret-id"),
