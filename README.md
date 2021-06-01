@@ -182,7 +182,7 @@ The `status` command should be a bit more verbose now :
 [VAULT]
 +-----------------+--------------------------------------+
 | Sealed          | false                                |
-| Cluster Version | 1.5.4                                |
+| Cluster Version | 1.7.2                                |
 | Cluster ID      | 5198332c-893c-ebbd-fdcf-82d3cdb47e4a |
 | Secrets #       |                                    3 |
 +-----------------+--------------------------------------+

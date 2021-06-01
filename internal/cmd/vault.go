@@ -119,7 +119,7 @@ func (v *Vault) ListTransitKeys() {
 
 // DeleteTransitKey : Delete a transit key from Vault
 func (v *Vault) DeleteTransitKey(key string) {
-	var p = make(map[string]interface{})
+	p := make(map[string]interface{})
 	p["deletion_allowed"] = "true"
 	_, err := v.Client.Logical().Write("transit/keys/"+key+"/config", p)
 	if err != nil {

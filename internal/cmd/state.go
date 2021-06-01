@@ -252,7 +252,7 @@ func (s *State) save() {
 		log.Fatal(err)
 	}
 
-	if err = ioutil.WriteFile(filename, output.Bytes(), 0600); err != nil {
+	if err = ioutil.WriteFile(filename, output.Bytes(), 0o600); err != nil {
 		log.Fatal(err)
 	}
 }

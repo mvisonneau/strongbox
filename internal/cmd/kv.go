@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	cli "github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2"
 )
 
 // KVGetPath ..

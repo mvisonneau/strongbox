@@ -2,29 +2,24 @@
 # BUILD CONTAINER
 ##
 
-FROM goreleaser/goreleaser:v0.145.0 as builder
+FROM alpine:3.13 as certs
 
-WORKDIR /build
-
-COPY Makefile .
 RUN \
-apk add --no-cache make ;\
-make setup
-
-COPY . .
-RUN \
-make build-linux-amd64
+apk add --no-cache ca-certificates
 
 ##
 # RELEASE CONTAINER
 ##
 
-FROM busybox:1.32.0-glibc
+FROM busybox:1.33-glibc
 
 WORKDIR /
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /build/dist/strongbox_linux_amd64/strongbox /usr/local/bin/
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY strongbox /usr/local/bin/
+
+# Run as nobody user
+USER 65534
 
 ENTRYPOINT ["/usr/local/bin/strongbox"]
 CMD [""]

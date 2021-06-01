@@ -1,48 +1,44 @@
 package cmd
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/vault/sdk/helper/mlock"
 	"github.com/mvisonneau/go-helpers/logger"
 	log "github.com/sirupsen/logrus"
-	cli "github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2"
 )
 
-var start time.Time
-var s *State
-var v *Vault
+var (
+	start time.Time
+	s     *State
+	v     *Vault
+)
 
-func configure(ctx *cli.Context) error {
+func configure(ctx *cli.Context) (err error) {
 	start = ctx.App.Metadata["startTime"].(time.Time)
 
-	lc := &logger.Config{
+	if err = logger.Configure(logger.Config{
 		Level:  ctx.String("log-level"),
 		Format: ctx.String("log-format"),
+	}); err != nil {
+		return
 	}
 
-	err := lc.Configure()
-	if err != nil {
-		return err
-	}
-
-	v, err = getVaultClient(&VaultConfig{
+	if v, err = getVaultClient(&VaultConfig{
 		Address:  ctx.String("vault-addr"),
 		Token:    ctx.String("vault-token"),
 		RoleID:   ctx.String("vault-role-id"),
 		SecretID: ctx.String("vault-secret-id"),
-	})
-
-	if err != nil {
-		return err
+	}); err != nil {
+		return
 	}
 
 	s = getStateClient(&StateConfig{
 		Path: ctx.String("state"),
 	})
 
-	return nil
+	return
 }
 
 func exit(exitCode int, err error) cli.ExitCoder {
@@ -59,15 +55,11 @@ func exit(exitCode int, err error) cli.ExitCoder {
 	return cli.NewExitError("", exitCode)
 }
 
-// ExecWrapper mlocks the process memory (if supported) before our `run` functions,
-// and gracefully logs and exits afterwards.
+// ExecWrapper gracefully logs and exits our `run` functions
 func ExecWrapper(f func(ctx *cli.Context) (int, error)) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
 		if err := mlock.LockMemory(); err != nil {
-			return exit(1, fmt.Errorf("error locking strongbox memory: %w", err))
-		}
-		if err := configure(ctx); err != nil {
-			return exit(1, err)
+			log.WithError(err).Warn("s5 requires the IPC_LOCK capability in order to secure its memory")
 		}
 		return exit(f(ctx))
 	}

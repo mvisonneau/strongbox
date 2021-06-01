@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	cli "github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2"
 
-	"github.com/mvisonneau/strongbox/cmd"
+	"github.com/mvisonneau/strongbox/internal/cmd"
 )
 
 // Run handles the instanciation of the CLI application

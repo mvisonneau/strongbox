@@ -10,6 +10,16 @@ and this project adheres to  [0ver](https://0ver.org).
 ### Added
 
 - Support for stdin input when ciphering
+- Added new tests
+- Release `snapcraft` packages
+- Release `ghcr.io` images
+
+### Changed
+
+- Throw a warning instead of exiting if `IPC_LOCK` is unsuccessful
+- Updated to go `1.16`
+- Refactored codebase following golang best practices
+- Updated all dependencies
 
 ## [0.2.0] - 2020-09-28
 

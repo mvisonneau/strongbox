@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/mvisonneau/strongbox/rand"
+	"github.com/mvisonneau/strongbox/pkg/rand"
 	"github.com/tcnksm/go-input"
 	cli "github.com/urfave/cli/v2"
 )
@@ -52,7 +52,6 @@ func SecretWrite(ctx *cli.Context) (int, error) {
 			Mask:        true,
 			MaskDefault: true,
 		})
-
 		if err != nil {
 			return 1, err
 		}
