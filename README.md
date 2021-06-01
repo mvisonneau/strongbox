@@ -27,7 +27,7 @@ Have a look onto the [latest release page](https://github.com/mvisonneau/strongb
 ### Go
 
 ```bash
-~$ go get -u github.com/mvisonneau/strongbox
+~$ go install github.com/mvisonneau/strongbox/cmd/strongbox@latest
 ```
 
 ### Homebrew
@@ -36,10 +36,18 @@ Have a look onto the [latest release page](https://github.com/mvisonneau/strongb
 ~$ brew install mvisonneau/tap/strongbox
 ```
 
+### Snapcraft
+
+```bash
+~$ snap install strongbox
+```
+
 ### Docker
 
 ```bash
-~$ docker run -it --rm mvisonneau/strongbox
+~$ docker run -it --rm docker.io/mvisonneau/strongbox
+or
+~$ docker run -it --rm ghcr.io/mvisonneau/strongbox
 ```
 
 ### Scoop
