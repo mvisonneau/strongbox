@@ -1,10 +1,12 @@
 # mvisonneau/strongbox
 
-[![GoDoc](https://godoc.org/github.com/mvisonneau/strongbox?status.svg)](https://godoc.org/github.com/mvisonneau/strongbox/app)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/mvisonneau/strongbox)](https://pkg.go.dev/mod/github.com/mvisonneau/strongbox)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mvisonneau/strongbox)](https://goreportcard.com/report/github.com/mvisonneau/strongbox)
 [![Docker Pulls](https://img.shields.io/docker/pulls/mvisonneau/strongbox.svg)](https://hub.docker.com/r/mvisonneau/strongbox/)
-[![Build Status](https://cloud.drone.io/api/badges/mvisonneau/strongbox/status.svg)](https://cloud.drone.io/mvisonneau/strongbox)
+[![test](https://github.com/mvisonneau/strongbox/actions/workflows/test.yml/badge.svg)](https://github.com/mvisonneau/strongbox/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/mvisonneau/strongbox/badge.svg?branch=main)](https://coveralls.io/github/mvisonneau/strongbox?branch=main)
+[![release](https://github.com/mvisonneau/strongbox/actions/workflows/release.yml/badge.svg)](https://github.com/mvisonneau/strongbox/actions/workflows/release.yml)
+[![strongbox](https://snapcraft.io/strongbox/badge.svg)](https://snapcraft.io/strongbox)
 
 Securely store secrets at rest using [Hashicorp Vault](https://www.vaultproject.io/).
 

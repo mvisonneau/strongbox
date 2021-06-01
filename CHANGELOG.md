@@ -16,6 +16,7 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ### Changed
 
+- Replaced Drone CI with GitHub actions
 - Throw a warning instead of exiting if `IPC_LOCK` is unsuccessful
 - Updated to go `1.16`
 - Refactored codebase following golang best practices
