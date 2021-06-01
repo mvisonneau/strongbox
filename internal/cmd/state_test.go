@@ -1,83 +1,93 @@
 package cmd
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-var state State
+var (
+	tmpDir string
+	state  State
+)
+
+// mainWrapper is necessary to be able to leverage "defer"
+// as os.Exit does not honour it and is required by *testing.M
+func mainWrapper(m *testing.M) int {
+	var err error
+	if tmpDir, err = ioutil.TempDir(".", ".test"); err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+	return m.Run()
+}
+
+func TestMain(m *testing.M) {
+	os.Exit(m.Run())
+}
 
 func getTestStateClient() *State {
+	var err error
+	var tmpFile *os.File
+	if tmpFile, err = ioutil.TempFile(tmpDir, "state"); err != nil {
+		log.Fatal(err)
+	}
 	return getStateClient(&StateConfig{
-		Path: "/tmp/test.yml",
+		Path: tmpFile.Name(),
 	})
 }
 
 func TestStateInit(t *testing.T) {
 	s := getTestStateClient()
 	s.Init()
-
-	if s.VaultKVPath() != "secret/" {
-		t.Fatalf("Expected s.VaultKVPath() to return secret/, got '%v'", s.VaultKVPath())
-	}
+	assert.Equal(t, "secret/", s.VaultKVPath())
 }
 
 func TestStateSetVaultTransitKey(t *testing.T) {
 	s := getTestStateClient()
 	s.SetVaultTransitKey("foo")
 	s.Load()
-
-	if s.VaultTransitKey() != "foo" {
-		t.Fatalf("Expected s.SetVaultTransitKey('foo') to set s.Vault.TransitKey to foo, got '%v'", s.VaultTransitKey())
-	}
+	assert.Equal(t, "foo", s.VaultTransitKey())
 }
 
 func TestStateVaultTransitKey(t *testing.T) {
 	s := getTestStateClient()
 	s.Vault.TransitKey = "foo"
-	if s.VaultTransitKey() != "foo" {
-		t.Fatalf("Expected s.VaultTransitKey() to return foo, got '%v'", s.VaultTransitKey())
-	}
+	assert.Equal(t, "foo", s.VaultTransitKey())
 }
 
 func TestStateSetVaultKVPath(t *testing.T) {
 	s := getTestStateClient()
 	s.SetVaultKVPath("secret/foo/")
 	s.Load()
-
-	if s.VaultKVPath() != "secret/foo/" {
-		t.Fatalf("Expected s.SetVaultKVPath('secret/foo/') to set s.VaultKVPath() to secret/foo/, got '%v'", s.VaultKVPath())
-	}
+	assert.Equal(t, "secret/foo/", s.VaultKVPath())
 }
 
 func TestStateVaultKVPath(t *testing.T) {
 	s := getTestStateClient()
 	s.Vault.KV.Path = "secret/foo/"
-	if s.VaultKVPath() != "secret/foo/" {
-		t.Fatalf("Expected s.VaultKVPath() to return secret/foo/, got '%v'", s.VaultKVPath())
-	}
+	assert.Equal(t, "secret/foo/", s.VaultKVPath())
 }
 
 func TestStateLoad(t *testing.T) {
 	s := getTestStateClient()
 	s.SetVaultTransitKey("foo")
 	s.SetVaultKVPath("secret/foo/")
-
-	if s.VaultTransitKey() != "foo" {
-		t.Fatalf("Expected s.VaultTransitKey() to return foo, got '%v'", s.VaultTransitKey())
-	}
-
-	if s.VaultKVPath() != "secret/foo/" {
-		t.Fatalf("Expected s.VaultKVPath() to return secret/foo/, got '%v'", s.VaultKVPath())
-	}
+	assert.Equal(t, "foo", s.VaultTransitKey())
+	assert.Equal(t, "secret/foo/", s.VaultKVPath())
 }
 
 func TestStateWriteSecretKey(t *testing.T) {
 	s := getTestStateClient()
 	s.Init()
 	s.WriteSecretKey("foo", "bar", "sensitive")
-
 	s.Load()
-	if s.Secrets["foo"]["bar"] != "sensitive" {
-		t.Fatalf("Expected s.Secrets['foo']['bar] to equal 'sensitive', got '%v'", s.Secrets["foo"]["bar"])
-	}
+
+	require.Contains(t, s.Secrets, "foo")
+	require.Contains(t, s.Secrets["foo"], "bar")
+	assert.Equal(t, "sensitive", s.Secrets["foo"]["bar"])
 }
