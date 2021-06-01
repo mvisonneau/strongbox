@@ -7,6 +7,8 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+## [v0.2.1] - 2021-06-01
+
 ### Added
 
 - Support for stdin input when ciphering
@@ -14,6 +16,7 @@ and this project adheres to  [0ver](https://0ver.org).
 - Release `snapcraft` packages
 - Release `ghcr.io` images
 - Publish "edge" artifacts (docker, snapcraft and binaries) for every `main` commit
+- `arm64` container images
 
 ### Changed
 
@@ -188,7 +191,8 @@ and this project adheres to  [0ver](https://0ver.org).
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/mvisonneau/strongbox/compare/0.2.0...v0.2.1
 [0.2.0]: https://github.com/mvisonneau/strongbox/compare/0.1.8...0.2.0
 [0.1.8]: https://github.com/mvisonneau/strongbox/compare/0.1.7...0.1.8
 [0.1.7]: https://github.com/mvisonneau/strongbox/compare/0.1.6...0.1.7
