@@ -1,4 +1,5 @@
 strongbox
+!cmd/strongbox
 *.out
 .strongbox_state.yml
 dist

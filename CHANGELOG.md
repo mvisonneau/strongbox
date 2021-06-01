@@ -13,6 +13,7 @@ and this project adheres to  [0ver](https://0ver.org).
 - Added new tests
 - Release `snapcraft` packages
 - Release `ghcr.io` images
+- Publish "edge" artifacts (docker, snapcraft and binaries) for every `main` commit
 
 ### Changed
 
