@@ -7,6 +7,8 @@ and this project adheres to  [0ver](https://0ver.org).
 
 ## [Unreleased]
 
+## [v0.2.2] - 2022-02-11
+
 ### Added
 
 - Release container images to `quay.io`
@@ -200,7 +202,8 @@ and this project adheres to  [0ver](https://0ver.org).
 - Some unit tests
 - License
 
-[Unreleased]: https://github.com/mvisonneau/strongbox/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/mvisonneau/strongbox/compare/v0.2.2...HEAD
+[v0.2.2]: https://github.com/mvisonneau/strongbox/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/mvisonneau/strongbox/compare/0.2.0...v0.2.1
 [0.2.0]: https://github.com/mvisonneau/strongbox/compare/0.1.8...0.2.0
 [0.1.8]: https://github.com/mvisonneau/strongbox/compare/0.1.7...0.1.8
