@@ -43,6 +43,7 @@ dockers:
   - image_templates:
       - 'docker.io/mvisonneau/strongbox:latest-amd64'
       - 'ghcr.io/mvisonneau/strongbox:latest-amd64'
+      - 'quay.io/mvisonneau/strongbox:latest-amd64'
     ids: [strongbox]
     goarch: amd64
     use_buildx: true
@@ -58,13 +59,14 @@ dockers:
       - --label=org.opencontainers.image.licenses=Apache-2.0
 
   - image_templates:
-      - 'docker.io/mvisonneau/strongbox:latest-arm64v8'
-      - 'ghcr.io/mvisonneau/strongbox:latest-arm64v8'
+      - 'docker.io/mvisonneau/strongbox:latest-arm64'
+      - 'ghcr.io/mvisonneau/strongbox:latest-arm64'
+      - 'quay.io/mvisonneau/strongbox:latest-arm64'
     ids: [strongbox]
     goarch: arm64
     use_buildx: true
     build_flag_templates:
-      - --platform=linux/arm64/v8
+      - --platform=linux/arm64
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description={{ .ProjectName }}
       - --label=org.opencontainers.image.url=https://github.com/mvisonneau/strongbox
@@ -78,12 +80,17 @@ docker_manifests:
   - name_template: docker.io/mvisonneau/strongbox:latest
     image_templates:
       - docker.io/mvisonneau/strongbox:latest-amd64
-      - docker.io/mvisonneau/strongbox:latest-arm64v8
+      - docker.io/mvisonneau/strongbox:latest-arm64
 
   - name_template: ghcr.io/mvisonneau/strongbox:latest
     image_templates:
       - ghcr.io/mvisonneau/strongbox:latest-amd64
-      - ghcr.io/mvisonneau/strongbox:latest-arm64v8
+      - ghcr.io/mvisonneau/strongbox:latest-arm64
+
+  - name_template: quay.io/mvisonneau/strongbox:latest
+    image_templates:
+      - quay.io/mvisonneau/strongbox:latest-amd64
+      - quay.io/mvisonneau/strongbox:latest-arm64
 
 signs:
   - artifacts: checksum

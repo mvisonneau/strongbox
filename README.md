@@ -46,8 +46,8 @@ Have a look onto the [latest release page](https://github.com/mvisonneau/strongb
 
 ```bash
 ~$ docker run -it --rm docker.io/mvisonneau/strongbox
-or
 ~$ docker run -it --rm ghcr.io/mvisonneau/strongbox
+~$ docker run -it --rm quay.io/mvisonneau/strongbox
 ```
 
 ### Scoop

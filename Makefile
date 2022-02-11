@@ -4,17 +4,13 @@ REPOSITORY    := mvisonneau/$(NAME)
 VAULT_VERSION := 1.7.2
 .DEFAULT_GOAL := help
 
-export GO111MODULE=on
-
 .PHONY: setup
 setup: ## Install required libraries/tools for build tasks
-	@command -v cover 2>&1 >/dev/null       || GO111MODULE=off go get -u -v golang.org/x/tools/cmd/cover
-	@command -v gofumpt 2>&1 >/dev/null     || GO111MODULE=off go get -u -v mvdan.cc/gofumpt
-	@command -v gosec 2>&1 >/dev/null       || GO111MODULE=off go get -u -v github.com/securego/gosec/cmd/gosec
-	@command -v goveralls 2>&1 >/dev/null   || GO111MODULE=off go get -u -v github.com/mattn/goveralls
-	@command -v ineffassign 2>&1 >/dev/null || GO111MODULE=off go get -u -v github.com/gordonklaus/ineffassign
-	@command -v misspell 2>&1 >/dev/null    || GO111MODULE=off go get -u -v github.com/client9/misspell/cmd/misspell
-	@command -v revive 2>&1 >/dev/null      || GO111MODULE=off go get -u -v github.com/mgechev/revive
+	@command -v gofumpt 2>&1 >/dev/null     || go install mvdan.cc/gofumpt@v0.2.1
+	@command -v gosec 2>&1 >/dev/null       || go install github.com/securego/gosec/v2/cmd/gosec@v2.9.6
+	@command -v ineffassign 2>&1 >/dev/null || go install github.com/gordonklaus/ineffassign@v0.0.0-20210914165742-4cc7213b9bc8
+	@command -v misspell 2>&1 >/dev/null    || go install github.com/client9/misspell/cmd/misspell@v0.3.4
+	@command -v revive 2>&1 >/dev/null      || go install github.com/mgechev/revive@v1.1.3
 
 .PHONY: fmt
 fmt: setup ## Format source code
@@ -100,7 +96,7 @@ dev-env: ## Build a local development environment using Docker
 		-w /$(NAME) \
 		-e VAULT_ADDR=http://$$(docker inspect vault | jq -r '.[0].NetworkSettings.IPAddress'):8200 \
 		-e VAULT_TOKEN=$$(docker logs vault 2>/dev/null | grep 'Root Token' | cut -d' ' -f3 | sed -E "s/[[:cntrl:]]\[[0-9]{1,3}m//g") \
-		golang:1.16 \
+		golang:1.17 \
 		/bin/bash -c 'make setup; make install; bash'
 	@docker kill vault
 	@docker rm vault -f
