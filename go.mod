@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/fatih/color v1.13.0
-	github.com/hashicorp/vault/api v1.3.1
-	github.com/hashicorp/vault/sdk v0.3.0
+	github.com/hashicorp/vault/api v1.5.0
+	github.com/hashicorp/vault/sdk v0.4.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mvisonneau/go-helpers v0.0.1
 	github.com/mvisonneau/s5 v0.0.0-20200911102212-e0293447f0a8
